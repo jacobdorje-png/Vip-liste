@@ -186,6 +186,7 @@
       <label class="today-check" id="tc-nina"><input type="checkbox" onchange="toggleToday('nina',this)"> Nina</label>
     </div>
     <button class="btn-fordel" onclick="fordel()">Fordel liste</button>
+    <button class="btn-fordel" style="background:#888;margin-left:4px" onclick="nullstill()">Nullstill</button>
   </div>
 
   <div class="drop-zone" id="drop-zone"
@@ -343,7 +344,16 @@ async function fordel() {
   await loadGuests();
 }
 
-// ── Render ───────────────────────────────────────────────────────
+async function nullstill() {
+  if (!confirm('Fjerne alle fordelinger?')) return;
+  const update = {};
+  CHECKS.forEach(c => update[c] = false);
+  await sb.from(TABLE).update(update).neq('id', '00000000-0000-0000-0000-000000000000');
+  toast('Fordeling nullstilt');
+  await loadGuests();
+}
+
+
 function render() {
   const q = (document.getElementById('search').value||'').toLowerCase();
   const list = q ? guests.filter(g=>
