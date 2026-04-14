@@ -42,6 +42,21 @@
   .btn-primary:hover{background:#2a2825;}
   .btn-gold{background:var(--gold);color:#fff;border-color:var(--gold);}
   .btn-gold:hover{background:#a07c2e;}
+
+  /* Fordel-bar */
+  .fordel-bar{background:#faf8f4;border-bottom:1px solid var(--border);padding:0.75rem 2.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;position:sticky;top:49px;z-index:9;}
+  .fordel-label{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+  .fordel-checks{display:flex;gap:1rem;flex-wrap:wrap;flex:1;}
+  .today-check{display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:4px 10px;border-radius:20px;border:1px solid var(--border-strong);background:var(--surface);transition:all 0.15s;user-select:none;}
+  .today-check input{display:none;}
+  .today-check.active-jacob{background:rgba(59,130,246,0.12);border-color:rgba(59,130,246,0.4);color:#1d4ed8;}
+  .today-check.active-simen{background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.4);color:#15803d;}
+  .today-check.active-ole{background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.5);color:#b45309;}
+  .today-check.active-richard{background:rgba(139,92,246,0.12);border-color:rgba(139,92,246,0.4);color:#6d28d9;}
+  .today-check.active-nina{background:rgba(236,72,153,0.12);border-color:rgba(236,72,153,0.4);color:#be185d;}
+  .btn-fordel{padding:7px 16px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;background:var(--ink);color:var(--parchment);border:none;white-space:nowrap;}
+  .btn-fordel:hover{background:#2a2825;}
+
   .drop-zone{margin:1.25rem 2.5rem;border:1.5px dashed var(--gold);border-radius:10px;background:var(--gold-dim);padding:1.5rem;text-align:center;display:none;cursor:pointer;}
   .drop-zone.open{display:block;}
   .drop-zone:hover{background:rgba(184,150,62,0.22);}
@@ -50,11 +65,8 @@
   .form-wrap{margin:1.25rem 2.5rem 0;background:var(--surface);border:1px solid var(--border-strong);border-radius:10px;padding:1.25rem;display:none;}
   .form-wrap.open{display:block;}
   .form-heading{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:500;margin-bottom:1rem;}
-  .form-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:0.75rem;}
+  .form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:0.75rem;}
   .form-full{margin-bottom:0.75rem;}
-  .form-checks{display:flex;gap:1.5rem;margin-bottom:1rem;flex-wrap:wrap;}
-  .check-label{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;user-select:none;}
-  .check-label input[type=checkbox]{width:16px;height:16px;accent-color:var(--gold);cursor:pointer;}
   .field{display:flex;flex-direction:column;gap:3px;}
   label{font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);}
   input[type=text],input[type=tel],textarea{padding:8px 10px;border:1px solid var(--border-strong);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;background:var(--parchment);color:var(--ink);outline:none;}
@@ -75,7 +87,18 @@
   td.col-kjopt textarea.inline-edit{width:200px;min-height:60px;padding:6px 8px;border:1.5px solid var(--gold);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;background:var(--surface);color:var(--ink);outline:none;resize:vertical;display:block;}
   tr:last-child td{border-bottom:none;}
   tbody tr{transition:background 0.1s;}
-  tbody tr:hover{background:var(--parchment);}
+  tbody tr:hover{background:rgba(0,0,0,0.02);}
+  /* Tildelt-farger */
+  tr.assigned-jacob{background:rgba(59,130,246,0.07);}
+  tr.assigned-jacob:hover{background:rgba(59,130,246,0.12);}
+  tr.assigned-simen{background:rgba(34,197,94,0.07);}
+  tr.assigned-simen:hover{background:rgba(34,197,94,0.12);}
+  tr.assigned-ole{background:rgba(245,158,11,0.09);}
+  tr.assigned-ole:hover{background:rgba(245,158,11,0.15);}
+  tr.assigned-richard{background:rgba(139,92,246,0.07);}
+  tr.assigned-richard:hover{background:rgba(139,92,246,0.12);}
+  tr.assigned-nina{background:rgba(236,72,153,0.07);}
+  tr.assigned-nina:hover{background:rgba(236,72,153,0.12);}
   .name-cell{display:flex;align-items:center;gap:8px;}
   .avatar{width:28px;height:28px;border-radius:50%;background:var(--gold-dim);border:1px solid rgba(184,150,62,0.3);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:11px;font-weight:600;color:var(--gold);flex-shrink:0;}
   .muted-cell{color:var(--muted);}
@@ -83,7 +106,7 @@
   .phone-link:hover{color:var(--gold);border-bottom-color:var(--gold);}
   .row-actions{display:flex;gap:3px;justify-content:flex-end;}
   .icon-btn{width:26px;height:26px;border-radius:5px;border:none;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0.3;transition:opacity 0.1s,background 0.1s;color:var(--ink);}
-  .icon-btn:hover{opacity:1;background:var(--parchment);}
+  .icon-btn:hover{opacity:1;background:rgba(0,0,0,0.06);}
   .icon-btn.del:hover{color:var(--danger);background:rgba(192,57,43,0.08);}
   .cb-toggle{width:18px;height:18px;accent-color:var(--gold);cursor:pointer;}
   .empty{text-align:center;padding:3.5rem 2rem;color:var(--muted);}
@@ -106,7 +129,7 @@
   .preview-item span{color:var(--muted);}
   .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--ink);color:var(--parchment);padding:10px 18px;border-radius:8px;font-size:13px;z-index:999;opacity:0;transform:translateY(6px);transition:opacity 0.2s,transform 0.2s;pointer-events:none;}
   .toast.show{opacity:1;transform:translateY(0);}
-  @media(max-width:600px){header,.toolbar{padding-left:1rem;padding-right:1rem;}.table-wrap,.form-wrap,.drop-zone{margin-left:1rem;margin-right:1rem;}.form-grid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:600px){header,.toolbar,.fordel-bar{padding-left:1rem;padding-right:1rem;}.table-wrap,.form-wrap,.drop-zone{margin-left:1rem;margin-right:1rem;}.form-grid{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
@@ -152,6 +175,19 @@
     <button class="btn btn-gold" onclick="openAddForm()">+ Legg til</button>
   </div>
 
+  <!-- Fordel-bar -->
+  <div class="fordel-bar">
+    <span class="fordel-label">Hvem er med i dag?</span>
+    <div class="fordel-checks">
+      <label class="today-check" id="tc-jacob"><input type="checkbox" onchange="toggleToday('jacob',this)"> Jacob</label>
+      <label class="today-check" id="tc-simen"><input type="checkbox" onchange="toggleToday('simen',this)"> Simen</label>
+      <label class="today-check" id="tc-ole"><input type="checkbox" onchange="toggleToday('ole',this)"> Ole</label>
+      <label class="today-check" id="tc-richard"><input type="checkbox" onchange="toggleToday('richard',this)"> Richard</label>
+      <label class="today-check" id="tc-nina"><input type="checkbox" onchange="toggleToday('nina',this)"> Nina</label>
+    </div>
+    <button class="btn-fordel" onclick="fordel()">Fordel liste</button>
+  </div>
+
   <div class="drop-zone" id="drop-zone"
     onclick="document.getElementById('file-input').click()"
     ondragover="event.preventDefault();this.classList.add('drag')"
@@ -175,13 +211,6 @@
     </div>
     <div class="form-full">
       <div class="field"><label>Tidligere kjøpt</label><textarea id="f-kjopt" placeholder="Skriv inn hva personen har kjøpt tidligere…"></textarea></div>
-    </div>
-    <div class="form-checks">
-      <label class="check-label"><input type="checkbox" id="f-jacob"> Jacob</label>
-      <label class="check-label"><input type="checkbox" id="f-simen"> Simen</label>
-      <label class="check-label"><input type="checkbox" id="f-ole"> Ole</label>
-      <label class="check-label"><input type="checkbox" id="f-richard"> Richard</label>
-      <label class="check-label"><input type="checkbox" id="f-nina"> Nina</label>
     </div>
     <div class="form-actions">
       <button class="btn" onclick="closeForm()">Avbryt</button>
@@ -279,6 +308,36 @@ function subscribeRealtime() {
     .subscribe();
 }
 
+// ── Fordel ───────────────────────────────────────────────────────
+function toggleToday(name, cb) {
+  const label = document.getElementById('tc-'+name);
+  if (cb.checked) label.classList.add('active-'+name);
+  else label.classList.remove('active-'+name);
+}
+
+async function fordel() {
+  const active = CHECKS.filter(c => document.getElementById('tc-'+c).querySelector('input').checked);
+  if (active.length === 0) { toast('Velg hvem som er med i dag først'); return; }
+  if (!confirm(`Fordele ${guests.length} gjester likt på: ${active.join(', ')}?`)) return;
+
+  const n = guests.length;
+  const perPerson = Math.ceil(n / active.length);
+
+  for (let i = 0; i < active.length; i++) {
+    const start = i * perPerson;
+    const end = Math.min(start + perPerson, n);
+    const ids = guests.slice(start, end).map(g => g.id);
+    if (!ids.length) continue;
+    const update = {};
+    CHECKS.forEach(c => update[c] = false);
+    update[active[i]] = true;
+    await sb.from(TABLE).update(update).in('id', ids);
+  }
+  toast('Fordelt!');
+  await loadGuests();
+}
+
+// ── Render ───────────────────────────────────────────────────────
 function render() {
   const q = (document.getElementById('search').value||'').toLowerCase();
   const list = q ? guests.filter(g=>
@@ -292,11 +351,13 @@ function render() {
     document.getElementById('empty').style.display='block'; return;
   }
   document.getElementById('empty').style.display='none';
-  document.getElementById('tbody').innerHTML = list.map(g=>`
-    <tr>
+  document.getElementById('tbody').innerHTML = list.map(g => {
+    const assigned = CHECKS.find(c => g[c]);
+    const rowClass = assigned ? `assigned-${assigned}` : '';
+    return `<tr class="${rowClass}">
       <td><div class="name-cell"><div class="avatar">${initials(g.fornavn,g.etternavn)}</div>${esc(g.fornavn||'')}</div></td>
       <td class="muted-cell">${esc(g.etternavn||'—')}</td>
-      <td>${g.phone ? `<a class="phone-link" href="sms:${esc(g.phone)}">${esc(g.phone)}</a>` : '<span class="muted-cell">—</span>'}</td>
+      <td>${g.phone?`<a class="phone-link" href="sms:${esc(g.phone)}">${esc(g.phone)}</a>`:'<span class="muted-cell">—</span>'}</td>
       <td class="col-kjopt muted-cell" title="Klikk for å redigere" onclick="startInlineEdit(this,'${g.id}','${esc(g.tidligere_kjopt||'')}')">${esc(g.tidligere_kjopt||'—')}</td>
       ${CHECKS.map(c=>`<td class="col-check"><input type="checkbox" class="cb-toggle" ${g[c]?'checked':''} onchange="toggleCheck('${g.id}','${c}',this.checked)"></td>`).join('')}
       <td><div class="row-actions">
@@ -307,7 +368,8 @@ function render() {
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
         </button>
       </div></td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 
 function initials(f,e){return((f||' ')[0]+(e||' ')[0]).toUpperCase();}
@@ -317,12 +379,30 @@ async function toggleCheck(id,col,val) {
   await sb.from(TABLE).update({[col]:val}).eq('id',id);
 }
 
+function startInlineEdit(td,id,current) {
+  if(td.classList.contains('editing'))return;
+  td.classList.add('editing');
+  const orig=current.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
+  td.innerHTML=`<textarea class="inline-edit" id="ie-${id}">${orig}</textarea>`;
+  const ta=document.getElementById('ie-'+id);
+  ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length);
+  async function save(){
+    const val=ta.value.trim();
+    td.classList.remove('editing');
+    td.textContent=val||'—';
+    await sb.from(TABLE).update({tidligere_kjopt:val}).eq('id',id);
+    const g=guests.find(x=>x.id===id); if(g)g.tidligere_kjopt=val;
+    td.onclick=()=>startInlineEdit(td,id,val);
+  }
+  ta.addEventListener('blur',save);
+  ta.addEventListener('keydown',e=>{if(e.key==='Escape'){ta.removeEventListener('blur',save);td.classList.remove('editing');td.textContent=orig||'—';td.onclick=()=>startInlineEdit(td,id,orig);}});
+}
+
 function openAddForm(){
   editId=null;
   document.getElementById('form-heading').textContent='Ny gjest';
   ['f-fornavn','f-etternavn','f-phone'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-kjopt').value='';
-  CHECKS.forEach(c=>document.getElementById('f-'+c).checked=false);
   document.getElementById('form-wrap').classList.add('open');
   setTimeout(()=>document.getElementById('f-fornavn').focus(),80);
 }
@@ -336,7 +416,6 @@ function startEdit(id){
   document.getElementById('f-etternavn').value=g.etternavn||'';
   document.getElementById('f-phone').value=g.phone||'';
   document.getElementById('f-kjopt').value=g.tidligere_kjopt||'';
-  CHECKS.forEach(c=>document.getElementById('f-'+c).checked=!!g[c]);
   document.getElementById('form-wrap').classList.add('open');
   setTimeout(()=>document.getElementById('f-fornavn').focus(),80);
 }
@@ -350,7 +429,6 @@ async function saveGuest(){
     phone:document.getElementById('f-phone').value.trim(),
     tidligere_kjopt:document.getElementById('f-kjopt').value.trim()
   };
-  CHECKS.forEach(c=>row[c]=document.getElementById('f-'+c).checked);
   if(editId){
     const{error}=await sb.from(TABLE).update(row).eq('id',editId);
     if(!error)toast('Gjest oppdatert'); else toast('Feil: '+error.message);
@@ -436,29 +514,7 @@ function exportExcel(){
   toast('Eksportert til Excel');
 }
 
-function startInlineEdit(td, id, current) {
-  if (td.classList.contains('editing')) return;
-  td.classList.add('editing');
-  const orig = current.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
-  td.innerHTML = `<textarea class="inline-edit" id="ie-${id}">${orig}</textarea>`;
-  const ta = document.getElementById('ie-'+id);
-  ta.focus();
-  ta.setSelectionRange(ta.value.length, ta.value.length);
-  async function save() {
-    const val = ta.value.trim();
-    td.classList.remove('editing');
-    td.onclick = null;
-    td.textContent = val || '—';
-    await sb.from(TABLE).update({tidligere_kjopt: val}).eq('id', id);
-    const g = guests.find(x=>x.id===id);
-    if (g) g.tidligere_kjopt = val;
-    td.onclick = () => startInlineEdit(td, id, val);
-  }
-  ta.addEventListener('blur', save);
-  ta.addEventListener('keydown', e => { if (e.key==='Escape') { ta.removeEventListener('blur',save); td.classList.remove('editing'); td.textContent=orig||'—'; td.onclick=()=>startInlineEdit(td,id,orig); } });
-}
-
-
+let toastTimer;
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeForm();closeImportModal();}});
 document.getElementById('import-modal').addEventListener('click',e=>{if(e.target===document.getElementById('import-modal'))closeImportModal();});
