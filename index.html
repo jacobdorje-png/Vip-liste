@@ -8,128 +8,206 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  :root{--ink:#0d0c0a;--parchment:#f5f0e8;--gold:#b8963e;--gold-light:#d4af6a;--gold-dim:rgba(184,150,62,0.13);--surface:#ffffff;--muted:#7a7570;--border:rgba(0,0,0,0.08);--border-strong:rgba(0,0,0,0.14);--danger:#c0392b;--success:#27ae60;}
+  :root{--ink:#0d0c0a;--parchment:#f5f0e8;--gold:#b8963e;--gold-light:#d4af6a;--gold-dim:rgba(184,150,62,0.13);--surface:#ffffff;--muted:#7a7570;--border:rgba(0,0,0,0.08);--border-strong:rgba(0,0,0,0.14);--danger:#c0392b;--success:#27ae60;
+    --c-jacob:rgba(59,130,246,0.12); --c-simen:rgba(34,197,94,0.12); --c-ole:rgba(245,158,11,0.15); --c-richard:rgba(139,92,246,0.12); --c-nina:rgba(236,72,153,0.12);
+    --t-jacob:#1d4ed8; --t-simen:#15803d; --t-ole:#b45309; --t-richard:#6d28d9; --t-nina:#be185d;
+  }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'DM Sans',sans-serif;background:var(--parchment);color:var(--ink);min-height:100vh;}
-  #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--ink);}
-  .login-box{background:#1a1916;border:1px solid rgba(184,150,62,0.25);border-radius:16px;padding:3rem 2.5rem;width:100%;max-width:380px;text-align:center;}
-  .login-brand{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:400;color:var(--parchment);margin-bottom:0.25rem;}
+
+  /* LOGIN */
+  #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--ink);padding:1rem;}
+  .login-box{background:#1a1916;border:1px solid rgba(184,150,62,0.25);border-radius:16px;padding:2.5rem 2rem;width:100%;max-width:360px;text-align:center;}
+  .login-brand{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:400;color:var(--parchment);margin-bottom:0.25rem;}
   .login-sub{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:2.5rem;}
-  .login-box input[type=password]{width:100%;padding:13px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(184,150,62,0.3);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:16px;color:var(--parchment);outline:none;text-align:center;letter-spacing:0.1em;margin-bottom:1rem;}
-  .login-box input[type=password]::placeholder{color:rgba(245,240,232,0.25);letter-spacing:normal;}
+  .login-box input[type=password]{width:100%;padding:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(184,150,62,0.3);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:18px;color:var(--parchment);outline:none;text-align:center;letter-spacing:0.1em;margin-bottom:1rem;}
+  .login-box input[type=password]::placeholder{color:rgba(245,240,232,0.25);letter-spacing:normal;font-size:15px;}
   .login-box input[type=password]:focus{border-color:var(--gold);}
-  .login-btn{width:100%;padding:13px;background:var(--gold);color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;}
-  .login-btn:hover{background:#a07c2e;}
+  .login-btn{width:100%;padding:16px;background:var(--gold);color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:500;cursor:pointer;}
+  .login-btn:active{background:#a07c2e;}
   .login-error{font-size:13px;color:#e74c3c;margin-top:0.75rem;min-height:20px;}
+
   #app{display:none;}
-  header{background:var(--ink);color:var(--parchment);padding:2rem 2.5rem;display:flex;align-items:flex-end;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;}
-  .brand-label{font-size:10px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);}
-  .brand-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:400;color:var(--parchment);line-height:1;}
-  .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
-  .stat-num{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold-light);line-height:1;}
-  .stat-lbl{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,240,232,0.4);}
-  .live-badge{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(245,240,232,0.4);}
-  .live-dot{width:7px;height:7px;border-radius:50%;background:var(--success);animation:pulse 2s infinite;}
+
+  /* HEADER */
+  header{background:var(--ink);color:var(--parchment);padding:1.25rem 1.25rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+  .brand-label{font-size:9px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);}
+  .brand-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--parchment);line-height:1;}
+  .header-right{display:flex;align-items:center;gap:1rem;}
+  .stat-num{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold-light);line-height:1;}
+  .stat-lbl{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,240,232,0.4);}
+  .live-badge{display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(245,240,232,0.4);}
+  .live-dot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse 2s infinite;}
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(39,174,96,0.4);}70%{box-shadow:0 0 0 6px rgba(39,174,96,0);}100%{box-shadow:0 0 0 0 rgba(39,174,96,0);}}
-  .toolbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0.875rem 2.5rem;display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;position:sticky;top:0;z-index:10;}
-  .search-wrap{flex:1;min-width:180px;position:relative;}
+
+  /* TOOLBAR */
+  .toolbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0.75rem 1rem;display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;position:sticky;top:0;z-index:10;}
+  .search-wrap{flex:1;min-width:140px;position:relative;}
   .search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:0.35;pointer-events:none;}
-  .search-wrap input{width:100%;padding:8px 10px 8px 34px;border:1px solid var(--border-strong);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;background:var(--parchment);color:var(--ink);outline:none;}
+  .search-wrap input{width:100%;padding:10px 10px 10px 34px;border:1px solid var(--border-strong);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;background:var(--parchment);color:var(--ink);outline:none;}
   .search-wrap input:focus{border-color:var(--gold);}
-  .btn{padding:8px 16px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);white-space:nowrap;display:inline-flex;align-items:center;gap:6px;}
-  .btn:hover{background:var(--parchment);}
+  .btn{padding:10px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);white-space:nowrap;display:inline-flex;align-items:center;gap:5px;}
+  .btn:active{background:var(--parchment);}
   .btn-primary{background:var(--ink);color:var(--parchment);border-color:var(--ink);}
-  .btn-primary:hover{background:#2a2825;}
-  .btn-gold{background:var(--gold);color:#fff;border-color:var(--gold);}
-  .btn-gold:hover{background:#a07c2e;}
+  .btn-gold{background:var(--gold);color:#fff;border-color:var(--gold);font-size:15px;padding:10px 18px;}
+  .btn-gold:active{background:#a07c2e;}
 
-  /* Fordel-bar */
-  .fordel-bar{background:#faf8f4;border-bottom:1px solid var(--border);padding:0.75rem 2.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;position:sticky;top:49px;z-index:9;}
-  .fordel-label{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
-  .fordel-checks{display:flex;gap:1rem;flex-wrap:wrap;flex:1;}
-  .today-check{display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:4px 10px;border-radius:20px;border:1px solid var(--border-strong);background:var(--surface);transition:all 0.15s;user-select:none;}
+  /* FORDEL BAR */
+  .fordel-bar{background:#faf8f4;border-bottom:1px solid var(--border);padding:0.75rem 1rem;position:sticky;top:53px;z-index:9;}
+  .fordel-label{font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem;}
+  .fordel-checks{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.6rem;}
+  .today-check{display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;padding:7px 12px;border-radius:20px;border:1px solid var(--border-strong);background:var(--surface);transition:all 0.15s;user-select:none;}
   .today-check input{display:none;}
-  .today-check.active-jacob{background:rgba(59,130,246,0.12);border-color:rgba(59,130,246,0.4);color:#1d4ed8;}
-  .today-check.active-simen{background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.4);color:#15803d;}
-  .today-check.active-ole{background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.5);color:#b45309;}
-  .today-check.active-richard{background:rgba(139,92,246,0.12);border-color:rgba(139,92,246,0.4);color:#6d28d9;}
-  .today-check.active-nina{background:rgba(236,72,153,0.12);border-color:rgba(236,72,153,0.4);color:#be185d;}
-  .btn-fordel{padding:7px 16px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;background:var(--ink);color:var(--parchment);border:none;white-space:nowrap;}
-  .btn-fordel:hover{background:#2a2825;}
+  .today-check.active-jacob{background:var(--c-jacob);border-color:rgba(59,130,246,0.4);color:var(--t-jacob);}
+  .today-check.active-simen{background:var(--c-simen);border-color:rgba(34,197,94,0.4);color:var(--t-simen);}
+  .today-check.active-ole{background:var(--c-ole);border-color:rgba(245,158,11,0.5);color:var(--t-ole);}
+  .today-check.active-richard{background:var(--c-richard);border-color:rgba(139,92,246,0.4);color:var(--t-richard);}
+  .today-check.active-nina{background:var(--c-nina);border-color:rgba(236,72,153,0.4);color:var(--t-nina);}
+  .fordel-btns{display:flex;gap:0.5rem;}
+  .btn-fordel{flex:1;padding:10px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;background:var(--ink);color:var(--parchment);border:none;text-align:center;}
+  .btn-fordel:active{background:#2a2825;}
+  .btn-nullstill{flex:1;padding:10px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;background:#888;color:#fff;border:none;text-align:center;}
+  .btn-nullstill:active{background:#666;}
 
-  .drop-zone{margin:1.25rem 2.5rem;border:1.5px dashed var(--gold);border-radius:10px;background:var(--gold-dim);padding:1.5rem;text-align:center;display:none;cursor:pointer;}
-  .drop-zone.open{display:block;}
-  .drop-zone:hover{background:rgba(184,150,62,0.22);}
-  .drop-zone p{font-size:13px;color:var(--muted);margin-top:0.4rem;}
-  .drop-zone strong{color:var(--gold);font-weight:500;}
-  .form-wrap{margin:1.25rem 2.5rem 0;background:var(--surface);border:1px solid var(--border-strong);border-radius:10px;padding:1.25rem;display:none;}
+  /* ADD FORM */
+  .form-wrap{margin:1rem;background:var(--surface);border:1px solid var(--border-strong);border-radius:12px;padding:1.25rem;display:none;}
   .form-wrap.open{display:block;}
-  .form-heading{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:500;margin-bottom:1rem;}
-  .form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:0.75rem;}
+  .form-heading{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;margin-bottom:1rem;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:0.75rem;}
   .form-full{margin-bottom:0.75rem;}
-  .field{display:flex;flex-direction:column;gap:3px;}
+  .field{display:flex;flex-direction:column;gap:4px;}
   label{font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);}
-  input[type=text],input[type=tel],textarea{padding:8px 10px;border:1px solid var(--border-strong);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;background:var(--parchment);color:var(--ink);outline:none;}
+  input[type=text],input[type=tel],textarea{padding:11px 12px;border:1px solid var(--border-strong);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;background:var(--parchment);color:var(--ink);outline:none;-webkit-appearance:none;}
   input[type=text]:focus,input[type=tel]:focus,textarea:focus{border-color:var(--gold);}
-  textarea{width:100%;resize:vertical;min-height:60px;}
-  .form-actions{display:flex;gap:8px;justify-content:flex-end;}
-  .table-wrap{margin:1.25rem 2.5rem 3rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
-  .table-scroll{overflow-x:auto;}
-  table{width:100%;border-collapse:collapse;min-width:980px;}
-  thead{background:var(--ink);}
-  th{font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,240,232,0.5);padding:11px 12px;text-align:left;white-space:nowrap;}
-  th.col-check{text-align:center;width:62px;}
-  td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;white-space:nowrap;}
-  td.col-check{text-align:center;}
-  td.col-kjopt{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;}
-  td.col-kjopt:hover{background:rgba(184,150,62,0.08);}
-  td.col-kjopt.editing{overflow:visible;white-space:normal;padding:4px 8px;}
-  td.col-kjopt textarea.inline-edit{width:200px;min-height:60px;padding:6px 8px;border:1.5px solid var(--gold);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;background:var(--surface);color:var(--ink);outline:none;resize:vertical;display:block;}
-  tr:last-child td{border-bottom:none;}
-  tbody tr{transition:background 0.1s;}
-  tbody tr:hover{background:rgba(0,0,0,0.02);}
-  /* Tildelt-farger */
-  tr.assigned-jacob{background:rgba(59,130,246,0.07);}
-  tr.assigned-jacob:hover{background:rgba(59,130,246,0.12);}
-  tr.assigned-simen{background:rgba(34,197,94,0.07);}
-  tr.assigned-simen:hover{background:rgba(34,197,94,0.12);}
-  tr.assigned-ole{background:rgba(245,158,11,0.09);}
-  tr.assigned-ole:hover{background:rgba(245,158,11,0.15);}
-  tr.assigned-richard{background:rgba(139,92,246,0.07);}
-  tr.assigned-richard:hover{background:rgba(139,92,246,0.12);}
-  tr.assigned-nina{background:rgba(236,72,153,0.07);}
-  tr.assigned-nina:hover{background:rgba(236,72,153,0.12);}
-  .name-cell{display:flex;align-items:center;gap:8px;}
-  .avatar{width:28px;height:28px;border-radius:50%;background:var(--gold-dim);border:1px solid rgba(184,150,62,0.3);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:11px;font-weight:600;color:var(--gold);flex-shrink:0;}
-  .muted-cell{color:var(--muted);}
-  .phone-link{color:var(--ink);text-decoration:none;border-bottom:1px solid rgba(184,150,62,0.4);}
-  .phone-link:hover{color:var(--gold);border-bottom-color:var(--gold);}
-  .row-actions{display:flex;gap:3px;justify-content:flex-end;}
-  .icon-btn{width:26px;height:26px;border-radius:5px;border:none;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0.3;transition:opacity 0.1s,background 0.1s;color:var(--ink);}
-  .icon-btn:hover{opacity:1;background:rgba(0,0,0,0.06);}
-  .icon-btn.del:hover{color:var(--danger);background:rgba(192,57,43,0.08);}
-  .cb-toggle{width:18px;height:18px;accent-color:var(--gold);cursor:pointer;}
-  .empty{text-align:center;padding:3.5rem 2rem;color:var(--muted);}
+  textarea{width:100%;resize:vertical;min-height:70px;}
+  .form-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:0.5rem;}
+  .form-actions .btn{justify-content:center;padding:12px;}
+
+  /* CARDS (mobile default) */
+  .cards{padding:0.75rem 1rem 5rem;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:0.6rem;overflow:hidden;transition:box-shadow 0.15s;}
+  .card.assigned-jacob{border-left:4px solid rgba(59,130,246,0.5);background:var(--c-jacob);}
+  .card.assigned-simen{border-left:4px solid rgba(34,197,94,0.5);background:var(--c-simen);}
+  .card.assigned-ole{border-left:4px solid rgba(245,158,11,0.6);background:var(--c-ole);}
+  .card.assigned-richard{border-left:4px solid rgba(139,92,246,0.5);background:var(--c-richard);}
+  .card.assigned-nina{border-left:4px solid rgba(236,72,153,0.5);background:var(--c-nina);}
+  .card-top{display:flex;align-items:center;gap:10px;padding:12px 14px 8px;}
+  .avatar{width:36px;height:36px;border-radius:50%;background:var(--gold-dim);border:1px solid rgba(184,150,62,0.3);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;color:var(--gold);flex-shrink:0;}
+  .card-name{flex:1;}
+  .card-fullname{font-size:16px;font-weight:500;line-height:1.2;}
+  .card-phone a{font-size:14px;color:var(--gold);text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-top:2px;}
+  .card-actions{display:flex;gap:4px;}
+  .icon-btn{width:34px;height:34px;border-radius:8px;border:none;background:rgba(0,0,0,0.04);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);}
+  .icon-btn:active{background:rgba(0,0,0,0.1);}
+  .icon-btn.del:active{color:var(--danger);}
+  .card-kjopt{padding:0 14px 8px;font-size:13px;color:var(--muted);cursor:pointer;min-height:24px;}
+  .card-kjopt:active{background:rgba(184,150,62,0.08);}
+  .card-kjopt.empty{color:#bbb;font-style:italic;}
+  .card-kjopt textarea.inline-edit{width:100%;padding:8px;border:1.5px solid var(--gold);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;background:var(--surface);color:var(--ink);outline:none;resize:vertical;min-height:60px;}
+  .card-checks{display:flex;padding:8px 14px 12px;gap:6px;flex-wrap:wrap;border-top:1px solid var(--border);}
+  .check-pill{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;border:1px solid var(--border-strong);background:var(--surface);font-size:13px;cursor:pointer;user-select:none;transition:all 0.1s;}
+  .check-pill input{display:none;}
+  .check-pill.checked-jacob{background:var(--c-jacob);border-color:rgba(59,130,246,0.4);color:var(--t-jacob);}
+  .check-pill.checked-simen{background:var(--c-simen);border-color:rgba(34,197,94,0.4);color:var(--t-simen);}
+  .check-pill.checked-ole{background:var(--c-ole);border-color:rgba(245,158,11,0.5);color:var(--t-ole);}
+  .check-pill.checked-richard{background:var(--c-richard);border-color:rgba(139,92,246,0.4);color:var(--t-richard);}
+  .check-pill.checked-nina{background:var(--c-nina);border-color:rgba(236,72,153,0.4);color:var(--t-nina);}
+  .check-mark{width:16px;height:16px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .check-mark svg{display:none;}
+  .check-pill.checked-jacob .check-mark svg,
+  .check-pill.checked-simen .check-mark svg,
+  .check-pill.checked-ole .check-mark svg,
+  .check-pill.checked-richard .check-mark svg,
+  .check-pill.checked-nina .check-mark svg{display:block;}
+
+  /* EMPTY */
+  .empty{text-align:center;padding:3rem 2rem;color:var(--muted);}
   .empty-icon{font-family:'Cormorant Garamond',serif;font-size:44px;color:rgba(184,150,62,0.3);margin-bottom:0.75rem;}
   .empty h3{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;margin-bottom:0.4rem;color:var(--ink);}
   .empty p{font-size:13px;}
-  .modal-bg{display:none;position:fixed;inset:0;background:rgba(13,12,10,0.6);z-index:100;align-items:center;justify-content:center;}
+
+  /* FAB - floating add button */
+  .fab{position:fixed;bottom:1.5rem;right:1.25rem;width:56px;height:56px;border-radius:50%;background:var(--gold);color:#fff;border:none;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(184,150,62,0.4);z-index:20;}
+  .fab:active{background:#a07c2e;}
+
+  /* DROP ZONE */
+  .drop-zone{margin:0 1rem 0.75rem;border:1.5px dashed var(--gold);border-radius:10px;background:var(--gold-dim);padding:1.25rem;text-align:center;display:none;cursor:pointer;}
+  .drop-zone.open{display:block;}
+  .drop-zone p{font-size:13px;color:var(--muted);margin-top:0.4rem;}
+  .drop-zone strong{color:var(--gold);font-weight:500;}
+
+  /* MODAL */
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(13,12,10,0.6);z-index:100;align-items:flex-end;justify-content:center;}
   .modal-bg.open{display:flex;}
-  .modal{background:var(--surface);border-radius:12px;padding:2rem;width:90%;max-width:520px;border:1px solid var(--border-strong);}
+  .modal{background:var(--surface);border-radius:16px 16px 0 0;padding:1.5rem 1.25rem 2rem;width:100%;max-width:600px;border-top:1px solid var(--border-strong);max-height:90vh;overflow-y:auto;}
   .modal h2{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;margin-bottom:1.25rem;}
-  .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem;}
+  .modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:1.25rem;}
+  .modal-actions .btn{justify-content:center;padding:12px;}
   .import-note{font-size:12px;color:var(--muted);margin-bottom:0.5rem;}
   .map-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;}
   .map-label{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
-  .map-grid select{padding:8px 10px;border:1px solid var(--border-strong);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;background:var(--parchment);color:var(--ink);outline:none;width:100%;}
-  .preview-list{max-height:180px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;margin-bottom:0.75rem;}
-  .preview-item{padding:7px 12px;border-bottom:1px solid var(--border);font-size:12px;display:flex;gap:1rem;}
+  .map-grid select{padding:10px;border:1px solid var(--border-strong);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;background:var(--parchment);color:var(--ink);outline:none;width:100%;}
+  .preview-list{max-height:160px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;margin-bottom:0.75rem;}
+  .preview-item{padding:8px 12px;border-bottom:1px solid var(--border);font-size:13px;display:flex;gap:1rem;}
   .preview-item:last-child{border-bottom:none;}
-  .preview-item strong{min-width:120px;color:var(--ink);}
+  .preview-item strong{min-width:100px;color:var(--ink);}
   .preview-item span{color:var(--muted);}
-  .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--ink);color:var(--parchment);padding:10px 18px;border-radius:8px;font-size:13px;z-index:999;opacity:0;transform:translateY(6px);transition:opacity 0.2s,transform 0.2s;pointer-events:none;}
-  .toast.show{opacity:1;transform:translateY(0);}
-  @media(max-width:600px){header,.toolbar,.fordel-bar{padding-left:1rem;padding-right:1rem;}.table-wrap,.form-wrap,.drop-zone{margin-left:1rem;margin-right:1rem;}.form-grid{grid-template-columns:1fr 1fr;}}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(10px);background:var(--ink);color:var(--parchment);padding:10px 20px;border-radius:20px;font-size:14px;z-index:999;opacity:0;transition:opacity 0.2s,transform 0.2s;pointer-events:none;white-space:nowrap;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* DESKTOP overrides */
+  @media(min-width:700px){
+    header{padding:2rem 2.5rem 1.5rem;}
+    .brand-title{font-size:36px;}
+    .toolbar{padding:0.875rem 2.5rem;}
+    .fordel-bar{padding:0.75rem 2.5rem;top:57px;display:flex;align-items:center;gap:1.5rem;}
+    .fordel-bar .fordel-label{margin-bottom:0;white-space:nowrap;}
+    .fordel-checks{margin-bottom:0;flex:1;}
+    .fordel-btns{flex-direction:row;gap:0.5rem;}
+    .btn-fordel,.btn-nullstill{flex:none;padding:8px 18px;}
+    .cards{display:none;}
+    .table-wrap{display:block;margin:1.25rem 2.5rem 3rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+    .table-scroll{overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;min-width:900px;}
+    thead{background:var(--ink);}
+    th{font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,240,232,0.5);padding:11px 12px;text-align:left;white-space:nowrap;}
+    th.col-check{text-align:center;width:62px;}
+    td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;white-space:nowrap;}
+    td.col-check{text-align:center;}
+    td.col-kjopt{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;}
+    td.col-kjopt:hover{background:rgba(184,150,62,0.08);}
+    td.col-kjopt.editing{overflow:visible;white-space:normal;padding:4px 8px;}
+    td.col-kjopt textarea.inline-edit{width:200px;min-height:60px;padding:6px 8px;border:1.5px solid var(--gold);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;background:var(--surface);color:var(--ink);outline:none;resize:vertical;display:block;}
+    tr:last-child td{border-bottom:none;}
+    tbody tr{transition:background 0.1s;}
+    tr.assigned-jacob{background:var(--c-jacob);}
+    tr.assigned-simen{background:var(--c-simen);}
+    tr.assigned-ole{background:var(--c-ole);}
+    tr.assigned-richard{background:var(--c-richard);}
+    tr.assigned-nina{background:var(--c-nina);}
+    .name-cell{display:flex;align-items:center;gap:8px;}
+    .muted-cell{color:var(--muted);}
+    .phone-link{color:var(--ink);text-decoration:none;border-bottom:1px solid rgba(184,150,62,0.4);}
+    .phone-link:hover{color:var(--gold);}
+    .row-actions{display:flex;gap:3px;justify-content:flex-end;}
+    .cb-toggle{width:18px;height:18px;accent-color:var(--gold);cursor:pointer;}
+    .empty-table{text-align:center;padding:3rem 2rem;color:var(--muted);}
+    .fab{display:none;}
+    .form-wrap{margin:1.25rem 2.5rem 0;border-radius:10px;}
+    .form-grid{grid-template-columns:repeat(3,1fr);}
+    .form-actions{display:flex;justify-content:flex-end;}
+    .form-actions .btn{width:auto;}
+    .drop-zone{margin:1.25rem 2.5rem 0;}
+    .modal-bg{align-items:center;}
+    .modal{border-radius:12px;padding:2rem;max-width:520px;width:90%;}
+    .toast{bottom:1.5rem;}
+  }
+  @media(max-width:699px){
+    .table-wrap{display:none;}
+    .form-wrap{border-radius:12px;}
+  }
 </style>
 </head>
 <body>
@@ -138,7 +216,7 @@
   <div class="login-box">
     <div class="login-brand">VIP</div>
     <div class="login-sub">Soli-Brug</div>
-    <input type="password" id="pw-input" placeholder="Skriv inn passordet" onkeydown="if(event.key==='Enter')tryLogin()">
+    <input type="password" id="pw-input" placeholder="Passord" onkeydown="if(event.key==='Enter')tryLogin()">
     <button class="login-btn" onclick="tryLogin()">Logg inn</button>
     <div class="login-error" id="login-error"></div>
   </div>
@@ -147,37 +225,36 @@
 <div id="app">
   <header>
     <div class="brand">
-      <span class="brand-label">Eksklusiv tilgangsliste</span>
+      <div class="brand-label">Soli-Brug</div>
       <h1 class="brand-title">VIP-liste</h1>
     </div>
     <div class="header-right">
-      <div class="stat">
+      <div class="stat" style="text-align:right">
         <div class="stat-num" id="total-count">0</div>
         <div class="stat-lbl">Gjester</div>
       </div>
-      <div class="live-badge"><div class="live-dot"></div>Sanntid</div>
+      <div class="live-badge"><div class="live-dot"></div>Live</div>
     </div>
   </header>
 
   <div class="toolbar">
     <div class="search-wrap">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" id="search" placeholder="Søk etter navn, telefon…" oninput="render()">
+      <input type="text" id="search" placeholder="Søk…" oninput="render()">
     </div>
     <button class="btn" onclick="toggleImport()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Importer Excel
+      Import
     </button>
     <button class="btn" onclick="exportExcel()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Eksporter
+      Export
     </button>
-    <button class="btn btn-gold" onclick="openAddForm()">+ Legg til</button>
+    <button class="btn btn-gold desktop-only" onclick="openAddForm()" style="display:none">+ Legg til</button>
   </div>
 
-  <!-- Fordel-bar -->
   <div class="fordel-bar">
-    <span class="fordel-label">Hvem er med i dag?</span>
+    <div class="fordel-label">Hvem er med i dag?</div>
     <div class="fordel-checks">
       <label class="today-check" id="tc-jacob"><input type="checkbox" onchange="toggleToday('jacob',this)"> Jacob</label>
       <label class="today-check" id="tc-simen"><input type="checkbox" onchange="toggleToday('simen',this)"> Simen</label>
@@ -185,8 +262,10 @@
       <label class="today-check" id="tc-richard"><input type="checkbox" onchange="toggleToday('richard',this)"> Richard</label>
       <label class="today-check" id="tc-nina"><input type="checkbox" onchange="toggleToday('nina',this)"> Nina</label>
     </div>
-    <button class="btn-fordel" onclick="fordel()">Fordel liste</button>
-    <button class="btn-fordel" style="background:#888;margin-left:4px" onclick="nullstill()">Nullstill</button>
+    <div class="fordel-btns">
+      <button class="btn-fordel" onclick="fordel()">Fordel liste</button>
+      <button class="btn-nullstill" onclick="nullstill()">Nullstill</button>
+    </div>
   </div>
 
   <div class="drop-zone" id="drop-zone"
@@ -194,12 +273,12 @@
     ondragover="event.preventDefault();this.classList.add('drag')"
     ondragleave="this.classList.remove('drag')"
     ondrop="handleDrop(event)">
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#b8963e" stroke-width="1.5" style="display:block;margin:0 auto 6px">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#b8963e" stroke-width="1.5" style="display:block;margin:0 auto 6px">
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
       <line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
     </svg>
     <strong>Klikk eller dra Excel-filen hit</strong>
-    <p>Støtter .xlsx og .xls · Kolonner gjenkjennes automatisk</p>
+    <p>Støtter .xlsx og .xls</p>
     <input type="file" id="file-input" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFile(this.files[0])">
   </div>
 
@@ -211,42 +290,40 @@
       <div class="field"><label>Telefon</label><input type="tel" id="f-phone" placeholder="+47 000 00 000"></div>
     </div>
     <div class="form-full">
-      <div class="field"><label>Tidligere kjøpt</label><textarea id="f-kjopt" placeholder="Skriv inn hva personen har kjøpt tidligere…"></textarea></div>
+      <div class="field"><label>Tidligere kjøpt</label><textarea id="f-kjopt" placeholder="Hva har personen kjøpt tidligere?"></textarea></div>
     </div>
     <div class="form-actions">
       <button class="btn" onclick="closeForm()">Avbryt</button>
-      <button class="btn btn-primary" onclick="saveGuest()">Lagre gjest</button>
+      <button class="btn btn-primary" onclick="saveGuest()">Lagre</button>
     </div>
   </div>
 
-  <div class="table-wrap">
+  <!-- Mobile cards -->
+  <div class="cards" id="cards"></div>
+  <div class="empty" id="empty" style="display:none">
+    <div class="empty-icon">★</div>
+    <h3>Ingen gjester ennå</h3>
+    <p>Trykk + for å legge til</p>
+  </div>
+
+  <!-- Desktop table -->
+  <div class="table-wrap" id="table-wrap">
     <div class="table-scroll">
       <table>
-        <thead>
-          <tr>
-            <th>Fornavn</th>
-            <th>Etternavn</th>
-            <th>Telefon</th>
-            <th>Tidligere kjøpt</th>
-            <th class="col-check">Jacob</th>
-            <th class="col-check">Simen</th>
-            <th class="col-check">Ole</th>
-            <th class="col-check">Richard</th>
-            <th class="col-check">Nina</th>
-            <th></th>
-          </tr>
-        </thead>
+        <thead><tr>
+          <th>Fornavn</th><th>Etternavn</th><th>Telefon</th><th>Tidligere kjøpt</th>
+          <th class="col-check">Jacob</th><th class="col-check">Simen</th><th class="col-check">Ole</th><th class="col-check">Richard</th><th class="col-check">Nina</th>
+          <th></th>
+        </tr></thead>
         <tbody id="tbody"></tbody>
       </table>
     </div>
-    <div class="empty" id="empty" style="display:none">
-      <div class="empty-icon">★</div>
-      <h3>Ingen gjester ennå</h3>
-      <p>Trykk «+ Legg til» eller importer en Excel-fil for å komme i gang.</p>
-    </div>
   </div>
+
+  <button class="fab" onclick="openAddForm()">+</button>
 </div>
 
+<!-- Import modal -->
 <div class="modal-bg" id="import-modal">
   <div class="modal">
     <h2>Importer fra Excel</h2>
@@ -261,7 +338,7 @@
     <div class="preview-list" id="preview-list"></div>
     <div class="modal-actions">
       <button class="btn" onclick="closeImportModal()">Avbryt</button>
-      <button class="btn btn-gold" onclick="doImport()">Importer til listen</button>
+      <button class="btn btn-gold" onclick="doImport()">Importer</button>
     </div>
   </div>
 </div>
@@ -269,120 +346,128 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const SUPABASE_URL = 'https://epfxrpbzxuwyiqsojlmu.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwZnhycGJ6eHV3eWlxc29qbG11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNTI4NTUsImV4cCI6MjA5MTcyODg1NX0.ZvZBoEn_SEA32FvWQK0E0MPMo5PRwoDgiD0fZUKYP_s';
-const ACCESS_PASSWORD = 'SoliBrug';
-const TABLE = 'vip_gjester';
-const CHECKS = ['jacob','simen','ole','richard','nina'];
+const SUPABASE_URL='https://epfxrpbzxuwyiqsojlmu.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwZnhycGJ6eHV3eWlxc29qbG11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNTI4NTUsImV4cCI6MjA5MTcyODg1NX0.ZvZBoEn_SEA32FvWQK0E0MPMo5PRwoDgiD0fZUKYP_s';
+const ACCESS_PASSWORD='SoliBrug';
+const TABLE='vip_gjester';
+const CHECKS=['jacob','simen','ole','richard','nina'];
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let guests=[],editId=null,importRows=[],importHeaders=[];
 
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-let guests = [], editId = null, importRows = [], importHeaders = [];
-
-function tryLogin() {
-  const pw = document.getElementById('pw-input').value;
-  if (pw === ACCESS_PASSWORD) {
+function tryLogin(){
+  const pw=document.getElementById('pw-input').value;
+  if(pw===ACCESS_PASSWORD){
     sessionStorage.setItem('vip-auth','1');
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='block';
-    loadGuests(); subscribeRealtime();
-  } else {
-    const err = document.getElementById('login-error');
-    err.textContent = 'Feil passord – prøv igjen.';
+    loadGuests();subscribeRealtime();
+  }else{
+    const err=document.getElementById('login-error');
+    err.textContent='Feil passord – prøv igjen.';
     document.getElementById('pw-input').value='';
-    document.getElementById('pw-input').focus();
     setTimeout(()=>err.textContent='',3000);
   }
 }
-if (sessionStorage.getItem('vip-auth')==='1') {
+if(sessionStorage.getItem('vip-auth')==='1'){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').style.display='block';
-  loadGuests(); subscribeRealtime();
+  loadGuests();subscribeRealtime();
 }
 
-async function loadGuests() {
-  const {data,error} = await sb.from(TABLE).select('*').order('etternavn',{ascending:true});
-  if (!error) { guests=data||[]; render(); }
+async function loadGuests(){
+  const{data,error}=await sb.from(TABLE).select('*').order('etternavn',{ascending:true});
+  if(!error){guests=data||[];render();}
 }
-function subscribeRealtime() {
-  sb.channel('vip_changes')
-    .on('postgres_changes',{event:'*',schema:'public',table:TABLE},()=>loadGuests())
-    .subscribe();
+function subscribeRealtime(){
+  sb.channel('vip_changes').on('postgres_changes',{event:'*',schema:'public',table:TABLE},()=>loadGuests()).subscribe();
 }
 
-// ── Fordel ───────────────────────────────────────────────────────
-function toggleToday(name, cb) {
-  const label = document.getElementById('tc-'+name);
-  if (cb.checked) label.classList.add('active-'+name);
+function toggleToday(name,cb){
+  const label=document.getElementById('tc-'+name);
+  if(cb.checked)label.classList.add('active-'+name);
   else label.classList.remove('active-'+name);
 }
 
-async function fordel() {
-  const active = CHECKS.filter(c => document.getElementById('tc-'+c).querySelector('input').checked);
-  if (active.length === 0) { toast('Velg hvem som er med i dag først'); return; }
-  if (!confirm(`Fordele ${guests.length} gjester likt på: ${active.join(', ')}?`)) return;
-
-  // Stokk rekkefølgen tilfeldig hver gang
-  for (let i = active.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [active[i], active[j]] = [active[j], active[i]];
+async function fordel(){
+  const active=CHECKS.filter(c=>document.getElementById('tc-'+c).querySelector('input').checked);
+  if(!active.length){toast('Velg hvem som er med i dag først');return;}
+  if(!confirm(`Fordele ${guests.length} gjester likt på: ${active.join(', ')}?`))return;
+  for(let i=active.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[active[i],active[j]]=[active[j],active[i]];}
+  const n=guests.length,perPerson=Math.ceil(n/active.length);
+  for(let i=0;i<active.length;i++){
+    const ids=guests.slice(i*perPerson,Math.min((i+1)*perPerson,n)).map(g=>g.id);
+    if(!ids.length)continue;
+    const update={};CHECKS.forEach(c=>update[c]=false);update[active[i]]=true;
+    await sb.from(TABLE).update(update).in('id',ids);
   }
-
-  const n = guests.length;
-  const perPerson = Math.ceil(n / active.length);
-
-  for (let i = 0; i < active.length; i++) {
-    const start = i * perPerson;
-    const end = Math.min(start + perPerson, n);
-    const ids = guests.slice(start, end).map(g => g.id);
-    if (!ids.length) continue;
-    const update = {};
-    CHECKS.forEach(c => update[c] = false);
-    update[active[i]] = true;
-    await sb.from(TABLE).update(update).in('id', ids);
-  }
-  toast('Fordelt!');
-  await loadGuests();
+  toast('Fordelt!');await loadGuests();
 }
 
-async function nullstill() {
-  if (!confirm('Fjerne alle fordelinger?')) return;
-  const update = {};
-  CHECKS.forEach(c => update[c] = false);
-  await sb.from(TABLE).update(update).neq('id', '00000000-0000-0000-0000-000000000000');
-  toast('Fordeling nullstilt');
-  await loadGuests();
+async function nullstill(){
+  if(!confirm('Fjerne alle fordelinger?'))return;
+  const update={};CHECKS.forEach(c=>update[c]=false);
+  await sb.from(TABLE).update(update).neq('id','00000000-0000-0000-0000-000000000000');
+  toast('Nullstilt');await loadGuests();
 }
 
+function render(){
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  const list=q?guests.filter(g=>(g.fornavn||'').toLowerCase().includes(q)||(g.etternavn||'').toLowerCase().includes(q)||(g.phone||'').toLowerCase().includes(q)||(g.tidligere_kjopt||'').toLowerCase().includes(q)):guests;
+  document.getElementById('total-count').textContent=guests.length;
+  const empty=document.getElementById('empty');
 
-function render() {
-  const q = (document.getElementById('search').value||'').toLowerCase();
-  const list = q ? guests.filter(g=>
-    (g.fornavn||'').toLowerCase().includes(q)||
-    (g.etternavn||'').toLowerCase().includes(q)||
-    (g.phone||'').toLowerCase().includes(q)||
-    (g.tidligere_kjopt||'').toLowerCase().includes(q)) : guests;
-  document.getElementById('total-count').textContent = guests.length;
-  if (!list.length) {
-    document.getElementById('tbody').innerHTML='';
-    document.getElementById('empty').style.display='block'; return;
+  // Mobile cards
+  const cards=document.getElementById('cards');
+  if(!list.length){cards.innerHTML='';empty.style.display='block';}
+  else{
+    empty.style.display='none';
+    cards.innerHTML=list.map(g=>{
+      const assigned=CHECKS.find(c=>g[c]);
+      const cardClass=assigned?`assigned-${assigned}`:'';
+      const pillsHtml=CHECKS.map(c=>{
+        const isChecked=!!g[c];
+        const checkedClass=isChecked?`checked-${c}`:'';
+        return `<label class="check-pill ${checkedClass}" id="pill-${g.id}-${c}" onclick="togglePill('${g.id}','${c}',this)">
+          <input type="checkbox" ${isChecked?'checked':''} style="display:none">
+          <span class="check-mark"><svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="2 6 5 9 10 3"/></svg></span>
+          ${c.charAt(0).toUpperCase()+c.slice(1)}
+        </label>`;
+      }).join('');
+      return `<div class="card ${cardClass}" id="card-${g.id}">
+        <div class="card-top">
+          <div class="avatar">${initials(g.fornavn,g.etternavn)}</div>
+          <div class="card-name">
+            <div class="card-fullname">${esc(g.fornavn||'')} ${esc(g.etternavn||'')}</div>
+            <div class="card-phone">${g.phone?`<a href="sms:${esc(g.phone)}">📱 ${esc(g.phone)}</a>`:''}</div>
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn" onclick="startEdit('${g.id}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="icon-btn del" onclick="deleteGuest('${g.id}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="card-kjopt ${!g.tidligere_kjopt?'empty':''}" onclick="startCardKjoptEdit(this,'${g.id}','${esc(g.tidligere_kjopt||'')}')">${esc(g.tidligere_kjopt||'Trykk for å legge inn tidligere kjøp…')}</div>
+        <div class="card-checks">${pillsHtml}</div>
+      </div>`;
+    }).join('');
   }
-  document.getElementById('empty').style.display='none';
-  document.getElementById('tbody').innerHTML = list.map(g => {
-    const assigned = CHECKS.find(c => g[c]);
-    const rowClass = assigned ? `assigned-${assigned}` : '';
-    return `<tr class="${rowClass}">
+
+  // Desktop table
+  const tbody=document.getElementById('tbody');
+  tbody.innerHTML=list.map(g=>{
+    const assigned=CHECKS.find(c=>g[c]);
+    return `<tr class="${assigned?'assigned-'+assigned:''}">
       <td><div class="name-cell"><div class="avatar">${initials(g.fornavn,g.etternavn)}</div>${esc(g.fornavn||'')}</div></td>
       <td class="muted-cell">${esc(g.etternavn||'—')}</td>
       <td>${g.phone?`<a class="phone-link" href="sms:${esc(g.phone)}">${esc(g.phone)}</a>`:'<span class="muted-cell">—</span>'}</td>
-      <td class="col-kjopt muted-cell" title="Klikk for å redigere" onclick="startInlineEdit(this,'${g.id}','${esc(g.tidligere_kjopt||'')}')">${esc(g.tidligere_kjopt||'—')}</td>
+      <td class="col-kjopt muted-cell" onclick="startInlineEdit(this,'${g.id}','${esc(g.tidligere_kjopt||'')}')">${esc(g.tidligere_kjopt||'—')}</td>
       ${CHECKS.map(c=>`<td class="col-check"><input type="checkbox" class="cb-toggle" ${g[c]?'checked':''} onchange="toggleCheck('${g.id}','${c}',this.checked)"></td>`).join('')}
       <td><div class="row-actions">
-        <button class="icon-btn" onclick="startEdit('${g.id}')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </button>
-        <button class="icon-btn del" onclick="deleteGuest('${g.id}')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-        </button>
+        <button class="icon-btn" onclick="startEdit('${g.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        <button class="icon-btn del" onclick="deleteGuest('${g.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
       </div></td>
     </tr>`;
   }).join('');
@@ -391,27 +476,58 @@ function render() {
 function initials(f,e){return((f||' ')[0]+(e||' ')[0]).toUpperCase();}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-async function toggleCheck(id,col,val) {
-  await sb.from(TABLE).update({[col]:val}).eq('id',id);
+async function togglePill(id,col,label){
+  const input=label.querySelector('input');
+  const newVal=!input.checked;
+  input.checked=newVal;
+  CHECKS.forEach(c=>{
+    const pl=document.getElementById(`pill-${id}-${c}`);
+    if(pl)pl.classList.remove(`checked-${c}`);
+  });
+  if(newVal)label.classList.add(`checked-${col}`);
+  const card=document.getElementById('card-'+id);
+  if(card){
+    CHECKS.forEach(c=>card.classList.remove('assigned-'+c));
+    if(newVal)card.classList.add('assigned-'+col);
+  }
+  await sb.from(TABLE).update({[col]:newVal}).eq('id',id);
+  const g=guests.find(x=>x.id===id);if(g)g[col]=newVal;
 }
 
-function startInlineEdit(td,id,current) {
+async function toggleCheck(id,col,val){await sb.from(TABLE).update({[col]:val}).eq('id',id);}
+
+function startCardKjoptEdit(div,id,current){
+  if(div.querySelector('textarea'))return;
+  const orig=current.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
+  div.classList.remove('empty');
+  div.innerHTML=`<textarea class="inline-edit">${orig}</textarea>`;
+  const ta=div.querySelector('textarea');
+  ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);
+  async function save(){
+    const val=ta.value.trim();
+    div.textContent=val||'Trykk for å legge inn tidligere kjøp…';
+    if(!val)div.classList.add('empty');
+    await sb.from(TABLE).update({tidligere_kjopt:val}).eq('id',id);
+    const g=guests.find(x=>x.id===id);if(g)g.tidligere_kjopt=val;
+  }
+  ta.addEventListener('blur',save);
+}
+
+function startInlineEdit(td,id,current){
   if(td.classList.contains('editing'))return;
   td.classList.add('editing');
   const orig=current.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
   td.innerHTML=`<textarea class="inline-edit" id="ie-${id}">${orig}</textarea>`;
   const ta=document.getElementById('ie-'+id);
-  ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length);
+  ta.focus();
   async function save(){
     const val=ta.value.trim();
-    td.classList.remove('editing');
-    td.textContent=val||'—';
+    td.classList.remove('editing');td.textContent=val||'—';
     await sb.from(TABLE).update({tidligere_kjopt:val}).eq('id',id);
-    const g=guests.find(x=>x.id===id); if(g)g.tidligere_kjopt=val;
+    const g=guests.find(x=>x.id===id);if(g)g.tidligere_kjopt=val;
     td.onclick=()=>startInlineEdit(td,id,val);
   }
   ta.addEventListener('blur',save);
-  ta.addEventListener('keydown',e=>{if(e.key==='Escape'){ta.removeEventListener('blur',save);td.classList.remove('editing');td.textContent=orig||'—';td.onclick=()=>startInlineEdit(td,id,orig);}});
 }
 
 function openAddForm(){
@@ -420,12 +536,13 @@ function openAddForm(){
   ['f-fornavn','f-etternavn','f-phone'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-kjopt').value='';
   document.getElementById('form-wrap').classList.add('open');
+  document.getElementById('form-wrap').scrollIntoView({behavior:'smooth',block:'nearest'});
   setTimeout(()=>document.getElementById('f-fornavn').focus(),80);
 }
 function closeForm(){editId=null;document.getElementById('form-wrap').classList.remove('open');}
 
 function startEdit(id){
-  const g=guests.find(x=>x.id===id); if(!g)return;
+  const g=guests.find(x=>x.id===id);if(!g)return;
   editId=id;
   document.getElementById('form-heading').textContent='Rediger gjest';
   document.getElementById('f-fornavn').value=g.fornavn||'';
@@ -433,32 +550,28 @@ function startEdit(id){
   document.getElementById('f-phone').value=g.phone||'';
   document.getElementById('f-kjopt').value=g.tidligere_kjopt||'';
   document.getElementById('form-wrap').classList.add('open');
+  document.getElementById('form-wrap').scrollIntoView({behavior:'smooth',block:'nearest'});
   setTimeout(()=>document.getElementById('f-fornavn').focus(),80);
 }
 
 async function saveGuest(){
   const fornavn=document.getElementById('f-fornavn').value.trim();
   if(!fornavn){document.getElementById('f-fornavn').focus();return;}
-  const row={
-    fornavn,
-    etternavn:document.getElementById('f-etternavn').value.trim(),
-    phone:document.getElementById('f-phone').value.trim(),
-    tidligere_kjopt:document.getElementById('f-kjopt').value.trim()
-  };
+  const row={fornavn,etternavn:document.getElementById('f-etternavn').value.trim(),phone:document.getElementById('f-phone').value.trim(),tidligere_kjopt:document.getElementById('f-kjopt').value.trim()};
   if(editId){
     const{error}=await sb.from(TABLE).update(row).eq('id',editId);
-    if(!error)toast('Gjest oppdatert'); else toast('Feil: '+error.message);
-  } else {
+    if(!error)toast('Gjest oppdatert');else toast('Feil: '+error.message);
+  }else{
     const{error}=await sb.from(TABLE).insert(row);
-    if(!error)toast('Gjest lagt til'); else toast('Feil: '+error.message);
+    if(!error)toast('Gjest lagt til');else toast('Feil: '+error.message);
   }
   closeForm();
 }
 
 async function deleteGuest(id){
   if(!confirm('Fjerne denne gjesten?'))return;
-  const{error}=await sb.from(TABLE).delete().eq('id',id);
-  if(!error)toast('Gjest fjernet');
+  await sb.from(TABLE).delete().eq('id',id);
+  toast('Gjest fjernet');
 }
 
 function toggleImport(){document.getElementById('drop-zone').classList.toggle('open');}
@@ -473,12 +586,11 @@ function handleFile(file){
     importHeaders=rows[0].map(String);
     importRows=rows.slice(1).filter(r=>r.some(c=>String(c).trim()));
     document.getElementById('import-note').textContent=`Fant ${importRows.length} rader i «${file.name}»`;
-    populateColSelects(importHeaders); updatePreview();
+    populateColSelects(importHeaders);updatePreview();
     document.getElementById('import-modal').classList.add('open');
     document.getElementById('drop-zone').classList.remove('open');
   };
-  reader.readAsArrayBuffer(file);
-  document.getElementById('file-input').value='';
+  reader.readAsArrayBuffer(file);document.getElementById('file-input').value='';
 }
 function guessCol(h,kws){const lh=h.map(s=>s.toLowerCase());for(const kw of kws){const i=lh.findIndex(s=>s.includes(kw));if(i>=0)return i;}return 0;}
 function populateColSelects(headers){
@@ -495,11 +607,7 @@ function updatePreview(){
   const ei=document.getElementById('col-etternavn').value;
   const pi=document.getElementById('col-phone').value;
   document.getElementById('preview-list').innerHTML=importRows.slice(0,5).map(row=>`
-    <div class="preview-item">
-      <strong>${esc(String(row[fi]||'').trim()||'—')}</strong>
-      <span>${esc(ei!==''?String(row[parseInt(ei)]||'').trim():'—')}</span>
-      <span>${esc(pi!==''?String(row[parseInt(pi)]||'').trim():'—')}</span>
-    </div>`).join('');
+    <div class="preview-item"><strong>${esc(String(row[fi]||'').trim()||'—')}</strong><span>${esc(ei!==''?String(row[parseInt(ei)]||'').trim():'—')}</span><span>${esc(pi!==''?String(row[parseInt(pi)]||'').trim():'—')}</span></div>`).join('');
 }
 async function doImport(){
   const fi=parseInt(document.getElementById('col-fornavn').value);
@@ -513,7 +621,7 @@ async function doImport(){
     tidligere_kjopt:ki!==''?String(row[parseInt(ki)]||'').trim():''
   })).filter(r=>r.fornavn);
   const{error}=await sb.from(TABLE).insert(rows);
-  if(!error)toast(`${rows.length} gjester importert`); else toast('Feil: '+error.message);
+  if(!error)toast(`${rows.length} gjester importert`);else toast('Feil: '+error.message);
   closeImportModal();
 }
 function closeImportModal(){document.getElementById('import-modal').classList.remove('open');importRows=[];importHeaders=[];}
@@ -526,8 +634,7 @@ function exportExcel(){
   ws['!cols']=[{wch:16},{wch:16},{wch:16},{wch:30},{wch:8},{wch:8},{wch:8},{wch:10},{wch:8}];
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'VIP-liste');
-  XLSX.writeFile(wb,'vip-liste.xlsx');
-  toast('Eksportert til Excel');
+  XLSX.writeFile(wb,'vip-liste.xlsx');toast('Eksportert');
 }
 
 let toastTimer;
