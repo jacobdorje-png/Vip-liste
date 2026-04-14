@@ -320,6 +320,12 @@ async function fordel() {
   if (active.length === 0) { toast('Velg hvem som er med i dag først'); return; }
   if (!confirm(`Fordele ${guests.length} gjester likt på: ${active.join(', ')}?`)) return;
 
+  // Stokk rekkefølgen tilfeldig hver gang
+  for (let i = active.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [active[i], active[j]] = [active[j], active[i]];
+  }
+
   const n = guests.length;
   const perPerson = Math.ceil(n / active.length);
 
