@@ -536,8 +536,10 @@ function openAddForm(){
   ['f-fornavn','f-etternavn','f-phone'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-kjopt').value='';
   document.getElementById('form-wrap').classList.add('open');
-  document.getElementById('form-wrap').scrollIntoView({behavior:'smooth',block:'nearest'});
-  setTimeout(()=>document.getElementById('f-fornavn').focus(),80);
+  setTimeout(()=>{
+    document.getElementById('form-wrap').scrollIntoView({behavior:'smooth',block:'start'});
+    document.getElementById('f-fornavn').focus();
+  },80);
 }
 function closeForm(){editId=null;document.getElementById('form-wrap').classList.remove('open');}
 
@@ -560,18 +562,20 @@ async function saveGuest(){
   const row={fornavn,etternavn:document.getElementById('f-etternavn').value.trim(),phone:document.getElementById('f-phone').value.trim(),tidligere_kjopt:document.getElementById('f-kjopt').value.trim()};
   if(editId){
     const{error}=await sb.from(TABLE).update(row).eq('id',editId);
-    if(!error)toast('Gjest oppdatert');else toast('Feil: '+error.message);
+    if(!error){toast('Gjest oppdatert');closeForm();await loadGuests();}
+    else toast('Feil: '+error.message);
   }else{
     const{error}=await sb.from(TABLE).insert(row);
-    if(!error)toast('Gjest lagt til');else toast('Feil: '+error.message);
+    if(!error){toast('Gjest lagt til');closeForm();await loadGuests();}
+    else toast('Feil: '+error.message);
   }
-  closeForm();
 }
 
 async function deleteGuest(id){
   if(!confirm('Fjerne denne gjesten?'))return;
   await sb.from(TABLE).delete().eq('id',id);
   toast('Gjest fjernet');
+  await loadGuests();
 }
 
 function toggleImport(){document.getElementById('drop-zone').classList.toggle('open');}
