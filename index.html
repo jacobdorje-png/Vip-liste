@@ -538,6 +538,608 @@ async function saveGuest(){
   const fornavn=document.getElementById('f-fornavn').value.trim();
   if(!fornavn){document.getElementById('f-fornavn').focus();return;}
   const row={fornavn,etternavn:document.getElementById('f-etternavn').value.trim(),phone:document.getElementById('f-phone').value.trim(),tidligere_kjopt:document.getElementById('f-kjopt').value.trim()};
+
+  // Sjekk duplikat telefonnummer
+  if(row.phone){
+    const dup=guests.find(g=>g.phone&&g.phone.replace(/\s/g,'')===row.phone.replace(/\s/g,'')&&g.id!==editId);
+    if(dup&&!confirm(`⚠️ Telefonnummeret ${row.phone} tilhører allerede ${dup.fornavn} ${dup.etternavn||''}.\n\nVil du lagre likevel?`))return;
+  }
+  if(editId){
+    const{error}=await sb.from(TABLE).update(row).eq('id',editId);
+    if(!error){toast('Gjest oppdatert');closeForm();await loadGuests();}
+    else toast('Feil: '+error.message);
+  }else{
+    const{error}=await sb.from(TABLE).insert(row);
+    if(!error){toast('Gjest lagt til');closeForm();await loadGuests();}
+    else toast('Feil: '+error.message);
+  }
+}
+async function deleteGuest(id){
+  if(!confirm('Fjerne denne gjesten?'))return;
+  await sb.from(TABLE).delete().eq('id',id);
+  toast('Gjest fjernet');await loadGuests();
+}
+
+// ── IMPORT ────────────────────────────────────────────────────────
+function openImport(){document.getElementById('import-sheet').classList.add('open');}
+function closeImport(){document.getElementById('import-sheet').classList.remove('open');importRows=[];importHeaders=[];document.getElementById('import-note').style.display='none';document.getElementById('import-map').style.display='none';document.getElementById('import-btn').style.display='none';}
+function handleFile(file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
+    const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''});
+    if(!rows.length){toast('Fant ingen data');return;}
+    importHeaders=rows[0].map(String);
+    importRows=rows.slice(1).filter(r=>r.some(c=>String(c).trim()));
+    const note=document.getElementById('import-note');
+    note.textContent=`Fant ${importRows.length} rader i «${file.name}»`;
+    note.style.display='block';
+    populateColSelects(importHeaders);updatePreview();
+    document.getElementById('import-map').style.display='block';
+    document.getElementById('import-btn').style.display='block';
+  };
+  reader.readAsArrayBuffer(file);document.getElementById('file-input').value='';
+}
+function guessCol(h,kws){const lh=h.map(s=>s.toLowerCase());for(const kw of kws){const i=lh.findIndex(s=>s.includes(kw));if(i>=0)return i;}return 0;}
+function populateColSelects(headers){
+  const none='<option value="">— ikke valgt —</option>';
+  const opts=headers.map((h,i)=>`<option value="${i}">${h||(i+1)}</option>`).join('');
+  ['col-fornavn','col-etternavn','col-phone','col-kjopt'].forEach(id=>document.getElementById(id).innerHTML=none+opts);
+  document.getElementById('col-fornavn').value=guessCol(headers,['fornavn','first','navn','name']);
+  document.getElementById('col-etternavn').value=guessCol(headers,['etternavn','last','surname']);
+  document.getElementById('col-phone').value=guessCol(headers,['telefon','phone','mobil','tlf']);
+  document.getElementById('col-kjopt').value=guessCol(headers,['kjøpt','kjopt','tidligere','previous','purchase']);
+}
+function updatePreview(){
+  const fi=parseInt(document.getElementById('col-fornavn').value);
+  const ei=document.getElementById('col-etternavn').value;
+  const pi=document.getElementById('col-phone').value;
+  document.getElementById('preview-list').innerHTML=importRows.slice(0,5).map(r=>`
+    <div class="preview-item"><strong>${esc(String(r[fi]||'').trim()||'—')}</strong><span>${esc(ei!==''?String(r[parseInt(ei)]||'').trim():'—')}</span><span>${esc(pi!==''?String(r[parseInt(pi)]||'').trim():'—')}</span></div>`).join('');
+}
+async function doImport(){
+  const fi=parseInt(document.getElementById('col-fornavn').value);
+  const ei=document.getElementById('col-etternavn').value;
+  const pi=document.getElementById('col-phone').value;
+  const ki=document.getElementById('col-kjopt').value;
+  const rows=importRows.map(r=>({
+    fornavn:String(r[fi]||'').trim(),
+    etternavn:ei!==''?String(r[parseInt(ei)]||'').trim():'',
+    phone:pi!==''?String(r[parseInt(pi)]||'').trim():'',
+    tidligere_kjopt:ki!==''?String(r[parseInt(ki)]||'').trim():''
+  })).filter(r=>r.fornavn);
+  const{error}=await sb.from(TABLE).insert(rows);
+  if(!error){toast(`${rows.length} gjester importert`);closeImport();await loadGuests();}
+  else toast('Feil: '+error.message);
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────
+function exportExcel(){
+  if(!guests.length){toast('Ingen gjester å eksportere');return;}
+  const data=[['Fornavn','Etternavn','Telefon','Tidligere kjøpt','Jacob','Simen','Ole','Richard','Nina'],
+    ...guests.map(g=>[g.fornavn,g.etternavn,g.phone,g.tidligere_kjopt,...CHECKS.map(c=>g[c]?'✓':'')])];
+  const ws=XLSX.utils.aoa_to_sheet(data);
+  ws['!cols']=[{wch:16},{wch:16},{wch:16},{wch:30},{wch:8},{wch:8},{wch:8},{wch:10},{wch:8}];
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'VIP-liste');
+  XLSX.writeFile(wb,'vip-liste.xlsx');toast('Eksportert');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);}
+
+// Close sheets on backdrop click
+document.getElementById('form-sheet').addEventListener('click',e=>{if(e.target===document.getElementById('form-sheet'))closeForm();});
+document.getElementById('import-sheet').addEventListener('click',e=>{if(e.target===document.getElementById('import-sheet'))closeImport();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeForm();closeImport();}});
+</script>
+</body>
+</html>
+header{background:var(--ink);padding:1.25rem 1.25rem 1rem;display:flex;align-items:center;justify-content:space-between;}
+.brand-wrap{display:flex;flex-direction:column;}
+.brand-label{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);}
+.brand-title{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--parchment);line-height:1;}
+.header-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold-light);line-height:1;}
+.stat-lbl{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,240,232,0.4);}
+.live-badge{display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(245,240,232,0.35);}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse 2s infinite;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(39,174,96,0.4);}70%{box-shadow:0 0 0 6px rgba(39,174,96,0);}100%{box-shadow:0 0 0 0 rgba(39,174,96,0);}}
+
+/* SEARCH BAR */
+.searchbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0.75rem 1rem;display:flex;gap:0.5rem;align-items:center;position:sticky;top:0;z-index:10;}
+.search-wrap{flex:1;position:relative;}
+.search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:0.3;pointer-events:none;}
+.search-wrap input{width:100%;padding:11px 11px 11px 36px;border:1px solid var(--border-strong);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:16px;background:var(--parchment);color:var(--ink);outline:none;-webkit-appearance:none;}
+.search-wrap input:focus{border-color:var(--gold);}
+.btn-sm{padding:10px 13px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+
+/* FORDEL BAR */
+.fordel-bar{background:#faf8f4;border-bottom:1px solid var(--border);padding:0.75rem 1rem;}
+.fordel-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;}
+.fordel-label{font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);}
+.fordel-btns{display:flex;gap:6px;}
+.btn-fordel{padding:8px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;background:var(--ink);color:var(--parchment);border:none;}
+.btn-nullstill{padding:8px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;background:#888;color:#fff;border:none;}
+.today-pills{display:flex;gap:6px;flex-wrap:wrap;}
+.today-pill{padding:7px 14px;border-radius:20px;border:1px solid var(--border-strong);background:var(--surface);font-size:13px;cursor:pointer;user-select:none;transition:all 0.15s;}
+.today-pill.on-jacob{background:var(--cj);border-color:rgba(59,130,246,0.4);color:var(--tj);}
+.today-pill.on-simen{background:var(--cs);border-color:rgba(34,197,94,0.4);color:var(--ts);}
+.today-pill.on-ole{background:var(--co);border-color:rgba(245,158,11,0.5);color:var(--to);}
+.today-pill.on-richard{background:var(--cr);border-color:rgba(139,92,246,0.4);color:var(--tr);}
+.today-pill.on-nina{background:var(--cn);border-color:rgba(236,72,153,0.4);color:var(--tn);}
+
+/* CARDS */
+.cards{padding:0.75rem 1rem 6rem;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:0.7rem;overflow:hidden;}
+.card.aj{border-left:4px solid rgba(59,130,246,0.5);background:var(--cj);}
+.card.as{border-left:4px solid rgba(34,197,94,0.5);background:var(--cs);}
+.card.ao{border-left:4px solid rgba(245,158,11,0.6);background:var(--co);}
+.card.ar{border-left:4px solid rgba(139,92,246,0.5);background:var(--cr);}
+.card.an{border-left:4px solid rgba(236,72,153,0.5);background:var(--cn);}
+.card-top{display:flex;align-items:center;gap:10px;padding:13px 14px 6px;}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--gold-dim);border:1px solid rgba(184,150,62,0.3);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;color:var(--gold);flex-shrink:0;}
+.card-info{flex:1;min-width:0;}
+.card-name{font-size:17px;font-weight:500;}
+.card-phone{margin-top:3px;}
+.card-phone a{font-size:19px;font-weight:500;color:var(--gold);text-decoration:none;display:inline-flex;align-items:center;gap:5px;}
+.card-btns{display:flex;gap:4px;flex-shrink:0;}
+.icon-btn{width:36px;height:36px;border-radius:9px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);}
+.card-kjopt{padding:2px 14px 10px;font-size:13px;color:var(--muted);cursor:pointer;line-height:1.4;}
+.card-kjopt.empty-txt{color:#bbb;font-style:italic;}
+.card-kjopt textarea{width:100%;padding:8px 10px;border:1.5px solid var(--gold);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;background:var(--surface);color:var(--ink);outline:none;resize:vertical;min-height:60px;}
+.card-checks{display:flex;gap:6px;flex-wrap:wrap;padding:8px 14px 13px;border-top:1px solid var(--border);}
+.cpill{display:flex;align-items:center;gap:5px;padding:8px 13px;border-radius:20px;border:1px solid var(--border-strong);background:var(--surface);font-size:14px;cursor:pointer;user-select:none;transition:all 0.12s;}
+.cpill.cj{background:var(--cj);border-color:rgba(59,130,246,0.4);color:var(--tj);}
+.cpill.cs{background:var(--cs);border-color:rgba(34,197,94,0.4);color:var(--ts);}
+.cpill.co{background:var(--co);border-color:rgba(245,158,11,0.5);color:var(--to);}
+.cpill.cr{background:var(--cr);border-color:rgba(139,92,246,0.4);color:var(--tr);}
+.cpill.cn{background:var(--cn);border-color:rgba(236,72,153,0.4);color:var(--tn);}
+.cpill-dot{width:8px;height:8px;border-radius:50%;border:1.5px solid currentColor;flex-shrink:0;}
+.cpill.cj .cpill-dot,.cpill.cs .cpill-dot,.cpill.co .cpill-dot,.cpill.cr .cpill-dot,.cpill.cn .cpill-dot{background:currentColor;}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:3.5rem 2rem;color:var(--muted);}
+.empty-icon{font-family:'Cormorant Garamond',serif;font-size:48px;color:rgba(184,150,62,0.25);margin-bottom:0.75rem;}
+.empty-state h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--ink);margin-bottom:0.4rem;}
+.empty-state p{font-size:14px;}
+
+/* FAB */
+.fab{position:fixed;bottom:1.75rem;right:1.25rem;width:58px;height:58px;border-radius:50%;background:var(--gold);color:#fff;border:none;font-size:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(184,150,62,0.45);z-index:20;line-height:1;}
+
+/* BOTTOM SHEET (form + import) */
+.sheet-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:50;align-items:flex-end;justify-content:center;}
+.sheet-bg.open{display:flex;}
+.sheet{background:var(--surface);border-radius:20px 20px 0 0;padding:1.5rem 1.25rem 2.5rem;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;}
+.sheet-handle{width:40px;height:4px;background:var(--border-strong);border-radius:2px;margin:0 auto 1.25rem;}
+.sheet-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;margin-bottom:1.25rem;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.form-row.three{grid-template-columns:1fr 1fr 1fr;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);}
+.field input,.field textarea,.field select{padding:13px 12px;border:1px solid var(--border-strong);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:16px;background:var(--parchment);color:var(--ink);outline:none;-webkit-appearance:none;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--gold);}
+.field textarea{resize:vertical;min-height:70px;}
+.sheet-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:1rem;}
+.sheet-btn{padding:14px;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:500;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);text-align:center;}
+.sheet-btn.primary{background:var(--ink);color:var(--parchment);border-color:var(--ink);}
+.sheet-btn.gold{background:var(--gold);color:#fff;border-color:var(--gold);}
+.preview-list{max-height:160px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;margin-bottom:0.75rem;}
+.preview-item{padding:8px 12px;border-bottom:1px solid var(--border);font-size:13px;display:flex;gap:1rem;}
+.preview-item:last-child{border-bottom:none;}
+.preview-item strong{min-width:100px;color:var(--ink);}
+.preview-item span{color:var(--muted);}
+.import-note{font-size:12px;color:var(--muted);margin-bottom:0.5rem;}
+
+/* DROP ZONE */
+.drop-zone{margin:0 1rem 0.75rem;border:1.5px dashed var(--gold);border-radius:12px;background:var(--gold-dim);padding:1.25rem;text-align:center;display:none;cursor:pointer;}
+.drop-zone.open{display:block;}
+.drop-zone p{font-size:13px;color:var(--muted);margin-top:4px;}
+.drop-zone strong{color:var(--gold);}
+
+/* TOAST */
+.toast{position:fixed;bottom:6rem;left:50%;transform:translateX(-50%) translateY(8px);background:var(--ink);color:var(--parchment);padding:11px 22px;border-radius:22px;font-size:14px;z-index:999;opacity:0;transition:opacity 0.2s,transform 0.2s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* DESKTOP */
+@media(min-width:700px){
+  .fab{display:none;}
+  .sheet-bg{align-items:center;}
+  .sheet{border-radius:16px;max-width:520px;padding:2rem;}
+  .sheet-handle{display:none;}
+  .cards{display:none;}
+  .table-wrap{display:block!important;margin:1.25rem 2.5rem 3rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  .table-scroll{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;min-width:900px;}
+  thead{background:var(--ink);}
+  th{font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,240,232,0.5);padding:11px 12px;text-align:left;white-space:nowrap;}
+  th.cc{text-align:center;width:62px;}
+  td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;white-space:nowrap;}
+  td.cc{text-align:center;}
+  td.kj{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;}
+  td.kj:hover{background:rgba(184,150,62,0.08);}
+  td.kj.editing{overflow:visible;white-space:normal;padding:4px 8px;}
+  td.kj textarea{width:200px;min-height:60px;padding:6px 8px;border:1.5px solid var(--gold);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;background:var(--surface);color:var(--ink);outline:none;resize:vertical;}
+  tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:rgba(0,0,0,0.02);}
+  tr.aj{background:var(--cj);}tr.as{background:var(--cs);}tr.ao{background:var(--co);}tr.ar{background:var(--cr);}tr.an{background:var(--cn);}
+  .name-cell{display:flex;align-items:center;gap:8px;}
+  .muted{color:var(--muted);}
+  .phone-link{color:var(--ink);text-decoration:none;border-bottom:1px solid rgba(184,150,62,0.4);}
+  .phone-link:hover{color:var(--gold);}
+  .row-acts{display:flex;gap:3px;justify-content:flex-end;}
+  .icon-btn-sm{width:26px;height:26px;border-radius:5px;border:none;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0.3;color:var(--ink);}
+  .icon-btn-sm:hover{opacity:1;background:rgba(0,0,0,0.06);}
+  .icon-btn-sm.del:hover{color:var(--danger);}
+  .cb{width:17px;height:17px;accent-color:var(--gold);cursor:pointer;}
+  header{padding:2rem 2.5rem 1.5rem;}
+  .brand-title{font-size:36px;}
+  .searchbar{padding:0.875rem 2.5rem;}
+  .fordel-bar{padding:0.75rem 2.5rem;display:flex;align-items:center;gap:1.5rem;}
+  .fordel-top{margin-bottom:0;flex:none;}
+  .fordel-label{white-space:nowrap;}
+  .today-pills{flex:1;}
+  .searchbar .btn-add-desk{display:inline-flex!important;}
+  .toast{bottom:1.5rem;}
+}
+@media(max-width:699px){
+  .table-wrap{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-brand">VIP</div>
+    <div class="login-sub">Soli-Brug</div>
+    <input type="password" id="pw-input" placeholder="Passord" onkeydown="if(event.key==='Enter')tryLogin()">
+    <button class="login-btn" onclick="tryLogin()">Logg inn</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<div id="app">
+  <header>
+    <div class="brand-wrap">
+      <div class="brand-label">Soli-Brug</div>
+      <h1 class="brand-title">VIP-liste</h1>
+    </div>
+    <div class="header-meta">
+      <div>
+        <div class="stat-num" id="total-count">0</div>
+        <div class="stat-lbl">Gjester</div>
+      </div>
+      <div class="live-badge"><div class="live-dot"></div>Live</div>
+    </div>
+  </header>
+
+  <div class="searchbar">
+    <div class="search-wrap">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search" placeholder="Søk…" oninput="render()">
+    </div>
+    <button class="btn-sm" onclick="openImport()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Import
+    </button>
+    <button class="btn-sm" onclick="exportExcel()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export
+    </button>
+    <button class="btn-sm btn-add-desk" onclick="openAddForm()" style="display:none;background:var(--gold);color:#fff;border-color:var(--gold);">+ Legg til</button>
+  </div>
+
+  <div class="fordel-bar">
+    <div class="fordel-top">
+      <div class="fordel-label">Hvem er med?</div>
+      <div class="fordel-btns">
+        <button class="btn-fordel" onclick="fordel()">Fordel</button>
+        <button class="btn-nullstill" onclick="nullstill()">Nullstill</button>
+      </div>
+    </div>
+    <div class="today-pills">
+      <div class="today-pill" id="tp-jacob" onclick="toggleToday('jacob')">Jacob</div>
+      <div class="today-pill" id="tp-simen" onclick="toggleToday('simen')">Simen</div>
+      <div class="today-pill" id="tp-ole" onclick="toggleToday('ole')">Ole</div>
+      <div class="today-pill" id="tp-richard" onclick="toggleToday('richard')">Richard</div>
+      <div class="today-pill" id="tp-nina" onclick="toggleToday('nina')">Nina</div>
+    </div>
+  </div>
+
+  <!-- Mobile cards -->
+  <div class="cards" id="cards"></div>
+  <div class="empty-state" id="empty-state" style="display:none">
+    <div class="empty-icon">★</div>
+    <h3>Ingen gjester ennå</h3>
+    <p>Trykk + for å legge til</p>
+  </div>
+
+  <!-- Desktop table -->
+  <div class="table-wrap" style="display:none">
+    <div class="table-scroll">
+      <table>
+        <thead><tr>
+          <th>Fornavn</th><th>Etternavn</th><th>Telefon</th><th>Tidligere kjøpt</th>
+          <th class="cc">Jacob</th><th class="cc">Simen</th><th class="cc">Ole</th><th class="cc">Richard</th><th class="cc">Nina</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <button class="fab" onclick="openAddForm()">+</button>
+</div>
+
+<!-- ADD/EDIT SHEET -->
+<div class="sheet-bg" id="form-sheet">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="form-title">Ny gjest</div>
+    <div class="form-row">
+      <div class="field"><label>Fornavn</label><input type="text" id="f-fornavn" placeholder="Fornavn"></div>
+      <div class="field"><label>Etternavn</label><input type="text" id="f-etternavn" placeholder="Etternavn"></div>
+    </div>
+    <div class="form-row" style="grid-template-columns:1fr;margin-bottom:10px">
+      <div class="field"><label>Telefon</label><input type="tel" id="f-phone" placeholder="+47 000 00 000"></div>
+    </div>
+    <div class="field" style="margin-bottom:10px"><label>Tidligere kjøpt</label><textarea id="f-kjopt" placeholder="Hva har personen kjøpt tidligere?"></textarea></div>
+    <div class="sheet-actions">
+      <button class="sheet-btn" onclick="closeForm()">Avbryt</button>
+      <button class="sheet-btn primary" onclick="saveGuest()">Lagre</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT SHEET -->
+<div class="sheet-bg" id="import-sheet">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Importer fra Excel</div>
+    <div style="border:1.5px dashed var(--gold);border-radius:12px;background:var(--gold-dim);padding:1.25rem;text-align:center;cursor:pointer;margin-bottom:1rem;" onclick="document.getElementById('file-input').click()">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#b8963e" stroke-width="1.5" style="display:block;margin:0 auto 6px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      <strong style="color:var(--gold)">Velg Excel-fil</strong>
+      <p style="font-size:13px;color:var(--muted);margin-top:4px">Støtter .xlsx og .xls</p>
+      <input type="file" id="file-input" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFile(this.files[0])">
+    </div>
+    <div class="import-note" id="import-note" style="display:none"></div>
+    <div id="import-map" style="display:none">
+      <div class="form-row">
+        <div class="field"><label>Fornavn-kolonne</label><select id="col-fornavn" onchange="updatePreview()"></select></div>
+        <div class="field"><label>Etternavn-kolonne</label><select id="col-etternavn" onchange="updatePreview()"></select></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Telefon-kolonne</label><select id="col-phone" onchange="updatePreview()"></select></div>
+        <div class="field"><label>Tidligere kjøpt</label><select id="col-kjopt" onchange="updatePreview()"></select></div>
+      </div>
+      <div class="import-note">Forhåndsvisning:</div>
+      <div class="preview-list" id="preview-list"></div>
+    </div>
+    <div class="sheet-actions">
+      <button class="sheet-btn" onclick="closeImport()">Avbryt</button>
+      <button class="sheet-btn gold" id="import-btn" onclick="doImport()" style="display:none">Importer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL='https://epfxrpbzxuwyiqsojlmu.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwZnhycGJ6eHV3eWlxc29qbG11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNTI4NTUsImV4cCI6MjA5MTcyODg1NX0.ZvZBoEn_SEA32FvWQK0E0MPMo5PRwoDgiD0fZUKYP_s';
+const ACCESS_PASSWORD='SoliBrug';
+const TABLE='vip_gjester';
+const CHECKS=['jacob','simen','ole','richard','nina'];
+const CCLS={jacob:'cj',simen:'cs',ole:'co',richard:'cr',nina:'cn'};
+const ACLS={jacob:'aj',simen:'as',ole:'ao',richard:'ar',nina:'an'};
+
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let guests=[],editId=null,importRows=[],importHeaders=[],todayActive={};
+
+// ── AUTH ──────────────────────────────────────────────────────────
+function tryLogin(){
+  const pw=document.getElementById('pw-input').value;
+  if(pw===ACCESS_PASSWORD){
+    sessionStorage.setItem('vip-auth','1');
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    loadGuests();subscribeRealtime();
+  }else{
+    const err=document.getElementById('login-error');
+    err.textContent='Feil passord – prøv igjen.';
+    document.getElementById('pw-input').value='';
+    setTimeout(()=>err.textContent='',3000);
+  }
+}
+if(sessionStorage.getItem('vip-auth')==='1'){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  loadGuests();subscribeRealtime();
+}
+
+// ── DATA ──────────────────────────────────────────────────────────
+async function loadGuests(){
+  const{data,error}=await sb.from(TABLE).select('*').order('etternavn',{ascending:true});
+  if(!error){guests=data||[];render();}
+}
+function subscribeRealtime(){
+  sb.channel('vip').on('postgres_changes',{event:'*',schema:'public',table:TABLE},()=>loadGuests()).subscribe();
+}
+
+// ── FORDEL ────────────────────────────────────────────────────────
+function toggleToday(name){
+  todayActive[name]=!todayActive[name];
+  const el=document.getElementById('tp-'+name);
+  if(todayActive[name])el.classList.add('on-'+name);
+  else el.classList.remove('on-'+name);
+}
+async function fordel(){
+  const active=CHECKS.filter(c=>todayActive[c]);
+  if(!active.length){toast('Velg hvem som er med i dag først');return;}
+  if(!confirm(`Fordele ${guests.length} gjester likt på: ${active.join(', ')}?`))return;
+  for(let i=active.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[active[i],active[j]]=[active[j],active[i]];}
+  const n=guests.length,per=Math.ceil(n/active.length);
+  for(let i=0;i<active.length;i++){
+    const ids=guests.slice(i*per,Math.min((i+1)*per,n)).map(g=>g.id);
+    if(!ids.length)continue;
+    const upd={};CHECKS.forEach(c=>upd[c]=false);upd[active[i]]=true;
+    await sb.from(TABLE).update(upd).in('id',ids);
+  }
+  toast('Fordelt!');await loadGuests();
+}
+async function nullstill(){
+  if(!confirm('Fjerne alle fordelinger?'))return;
+  const upd={};CHECKS.forEach(c=>upd[c]=false);
+  await sb.from(TABLE).update(upd).neq('id','00000000-0000-0000-0000-000000000000');
+  toast('Nullstilt');await loadGuests();
+}
+
+// ── RENDER ────────────────────────────────────────────────────────
+function render(){
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  const list=q?guests.filter(g=>(g.fornavn||'').toLowerCase().includes(q)||(g.etternavn||'').toLowerCase().includes(q)||(g.phone||'').toLowerCase().includes(q)||(g.tidligere_kjopt||'').toLowerCase().includes(q)):guests;
+  document.getElementById('total-count').textContent=guests.length;
+  const emptyEl=document.getElementById('empty-state');
+  const cardsEl=document.getElementById('cards');
+
+  if(!list.length){
+    cardsEl.innerHTML='';
+    emptyEl.style.display='block';
+  } else {
+    emptyEl.style.display='none';
+    cardsEl.innerHTML=list.map(g=>{
+      const a=CHECKS.find(c=>g[c]);
+      return `<div class="card ${a?ACLS[a]:''}" id="card-${g.id}">
+        <div class="card-top">
+          <div class="avatar">${ini(g.fornavn,g.etternavn)}</div>
+          <div class="card-info">
+            <div class="card-name">${esc(g.fornavn||'')} ${esc(g.etternavn||'')}</div>
+            <div class="card-phone">${g.phone?`<a href="sms:${esc(g.phone)}">📱 ${esc(g.phone)}</a>`:''}</div>
+          </div>
+          <div class="card-btns">
+            <button class="icon-btn" onclick="startEdit('${g.id}')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="icon-btn" onclick="deleteGuest('${g.id}')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="card-kjopt ${g.tidligere_kjopt?'':'empty-txt'}" id="kj-${g.id}" onclick="editKjopt('${g.id}')">${esc(g.tidligere_kjopt||'Trykk for å legge inn tidligere kjøp…')}</div>
+        <div class="card-checks">
+          ${CHECKS.map(c=>`<div class="cpill ${g[c]?CCLS[c]:''}" id="cp-${g.id}-${c}" onclick="toggleCheck('${g.id}','${c}')"><div class="cpill-dot"></div>${c.charAt(0).toUpperCase()+c.slice(1)}</div>`).join('')}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Desktop table
+  document.getElementById('tbody').innerHTML=list.map(g=>{
+    const a=CHECKS.find(c=>g[c]);
+    return `<tr class="${a?ACLS[a]:''}">
+      <td><div class="name-cell"><div class="avatar">${ini(g.fornavn,g.etternavn)}</div>${esc(g.fornavn||'')}</div></td>
+      <td class="muted">${esc(g.etternavn||'—')}</td>
+      <td>${g.phone?`<a class="phone-link" href="sms:${esc(g.phone)}">${esc(g.phone)}</a>`:'<span class="muted">—</span>'}</td>
+      <td class="kj" onclick="startDesktopKjopt(this,'${g.id}','${esc(g.tidligere_kjopt||'')}')">${esc(g.tidligere_kjopt||'—')}</td>
+      ${CHECKS.map(c=>`<td class="cc"><input type="checkbox" class="cb" ${g[c]?'checked':''} onchange="toggleCheckDirect('${g.id}','${c}',this.checked)"></td>`).join('')}
+      <td><div class="row-acts">
+        <button class="icon-btn-sm" onclick="startEdit('${g.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        <button class="icon-btn-sm del" onclick="deleteGuest('${g.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function ini(f,e){return((f||' ')[0]+(e||' ')[0]).toUpperCase();}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── CHECKS ────────────────────────────────────────────────────────
+async function toggleCheck(id,col){
+  const g=guests.find(x=>x.id===id);if(!g)return;
+  const newVal=!g[col];
+  g[col]=newVal;
+  const pill=document.getElementById(`cp-${id}-${col}`);
+  if(pill){
+    if(newVal)pill.classList.add(CCLS[col]);
+    else pill.classList.remove(CCLS[col]);
+  }
+  const card=document.getElementById('card-'+id);
+  if(card){
+    CHECKS.forEach(c=>card.classList.remove(ACLS[c]));
+    const assigned=CHECKS.find(c=>g[c]);
+    if(assigned)card.classList.add(ACLS[assigned]);
+  }
+  await sb.from(TABLE).update({[col]:newVal}).eq('id',id);
+}
+async function toggleCheckDirect(id,col,val){
+  await sb.from(TABLE).update({[col]:val}).eq('id',id);
+}
+
+// ── KJOPT EDIT ────────────────────────────────────────────────────
+async function editKjopt(id){
+  const el=document.getElementById('kj-'+id);
+  if(!el||el.querySelector('textarea'))return;
+  const g=guests.find(x=>x.id===id);
+  const orig=g?g.tidligere_kjopt||'':'';
+  el.classList.remove('empty-txt');
+  el.innerHTML=`<textarea>${esc(orig)}</textarea>`;
+  const ta=el.querySelector('textarea');
+  ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);
+  ta.addEventListener('blur',async()=>{
+    const val=ta.value.trim();
+    el.textContent=val||'Trykk for å legge inn tidligere kjøp…';
+    if(!val)el.classList.add('empty-txt');
+    if(g)g.tidligere_kjopt=val;
+    await sb.from(TABLE).update({tidligere_kjopt:val}).eq('id',id);
+  });
+}
+async function startDesktopKjopt(td,id,current){
+  if(td.classList.contains('editing'))return;
+  td.classList.add('editing');
+  const orig=current.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
+  td.innerHTML=`<textarea>${orig}</textarea>`;
+  const ta=td.querySelector('textarea');ta.focus();
+  ta.addEventListener('blur',async()=>{
+    const val=ta.value.trim();
+    td.classList.remove('editing');td.textContent=val||'—';
+    await sb.from(TABLE).update({tidligere_kjopt:val}).eq('id',id);
+    const g=guests.find(x=>x.id===id);if(g)g.tidligere_kjopt=val;
+    td.onclick=()=>startDesktopKjopt(td,id,val);
+  });
+}
+
+// ── FORM ──────────────────────────────────────────────────────────
+function openAddForm(){
+  editId=null;
+  document.getElementById('form-title').textContent='Ny gjest';
+  document.getElementById('f-fornavn').value='';
+  document.getElementById('f-etternavn').value='';
+  document.getElementById('f-phone').value='';
+  document.getElementById('f-kjopt').value='';
+  document.getElementById('form-sheet').classList.add('open');
+  setTimeout(()=>document.getElementById('f-fornavn').focus(),200);
+}
+function closeForm(){
+  document.getElementById('form-sheet').classList.remove('open');
+  editId=null;
+}
+function startEdit(id){
+  const g=guests.find(x=>x.id===id);if(!g)return;
+  editId=id;
+  document.getElementById('form-title').textContent='Rediger gjest';
+  document.getElementById('f-fornavn').value=g.fornavn||'';
+  document.getElementById('f-etternavn').value=g.etternavn||'';
+  document.getElementById('f-phone').value=g.phone||'';
+  document.getElementById('f-kjopt').value=g.tidligere_kjopt||'';
+  document.getElementById('form-sheet').classList.add('open');
+  setTimeout(()=>document.getElementById('f-fornavn').focus(),200);
+}
+async function saveGuest(){
+  const fornavn=document.getElementById('f-fornavn').value.trim();
+  if(!fornavn){document.getElementById('f-fornavn').focus();return;}
+  const row={fornavn,etternavn:document.getElementById('f-etternavn').value.trim(),phone:document.getElementById('f-phone').value.trim(),tidligere_kjopt:document.getElementById('f-kjopt').value.trim()};
   if(editId){
     const{error}=await sb.from(TABLE).update(row).eq('id',editId);
     if(!error){toast('Gjest oppdatert');closeForm();await loadGuests();}
