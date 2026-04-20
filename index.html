@@ -356,8 +356,9 @@ if(sessionStorage.getItem('vip-auth')==='1'){
 
 // ── DATA ──────────────────────────────────────────────────────────
 async function loadGuests(){
+  const scrollY=window.scrollY;
   const{data,error}=await sb.from(TABLE).select('*').order('etternavn',{ascending:true});
-  if(!error){guests=data||[];render();}
+  if(!error){guests=data||[];render();window.scrollTo({top:scrollY});}
 }
 function subscribeRealtime(){
   sb.channel('vip').on('postgres_changes',{event:'*',schema:'public',table:TABLE},()=>loadGuests()).subscribe();
