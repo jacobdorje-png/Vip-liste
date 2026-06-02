@@ -84,8 +84,10 @@ header{background:var(--ink);padding:1.25rem 1.25rem 1rem;display:flex;align-ite
 .card-phone a{font-size:19px;font-weight:500;color:var(--gold);text-decoration:none;display:inline-flex;align-items:center;gap:5px;}
 .card-btns{display:flex;gap:4px;flex-shrink:0;}
 .icon-btn{width:36px;height:36px;border-radius:9px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);}
-.card-utsender{padding:4px 14px 10px;font-size:13px;font-weight:600;color:var(--surface);background:var(--gold);display:inline-block;margin:0 14px 10px;border-radius:20px;}
-.card-utsender:empty{display:none;}
+.card-utsender-bar{padding:7px 14px;font-size:13px;border-bottom:1px solid var(--border);}
+.card-utsender-bar.has-utsender{background:var(--gold);color:#fff;}
+.card-utsender-bar.no-utsender{color:#bbb;font-style:italic;background:transparent;}
+.card-utsender-bar strong{font-weight:700;}
 .card-kjopt{padding:2px 14px 10px;font-size:13px;color:var(--muted);cursor:pointer;line-height:1.4;}
 .card-kjopt.empty-txt{color:#bbb;font-style:italic;}
 .card-kjopt textarea{width:100%;padding:8px 10px;border:1.5px solid var(--gold);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;background:var(--surface);color:var(--ink);outline:none;resize:vertical;min-height:60px;}
@@ -418,6 +420,9 @@ function render(){
     cardsEl.innerHTML=list.map(g=>{
       const a=CHECKS.find(c=>g[c]);
       return `<div class="card ${a?ACLS[a]:''}" id="card-${g.id}">
+        <div class="card-utsender-bar ${g.utsender?'has-utsender':'no-utsender'}">
+          ${g.utsender?`📨 Sendt av: <strong>${esc(g.utsender)}</strong>`:'Ikke tildelt'}
+        </div>
         <div class="card-top">
           <div class="avatar">${ini(g.fornavn,g.etternavn)}</div>
           <div class="card-info">
@@ -434,7 +439,6 @@ function render(){
           </div>
         </div>
         <div class="card-kjopt ${g.tidligere_kjopt?'':'empty-txt'}" id="kj-${g.id}" onclick="editKjopt('${g.id}')">${esc(g.tidligere_kjopt||'Trykk for å legge inn tidligere kjøp…')}</div>
-        ${g.utsender?`<div class="card-utsender">📨 Sendt av: ${esc(g.utsender)}</div>`:''}
         <div class="card-checks">
           ${CHECKS.map(c=>`<div class="cpill ${g[c]?CCLS[c]:''}" id="cp-${g.id}-${c}" onclick="toggleCheck('${g.id}','${c}')"><div class="cpill-dot"></div>${c.charAt(0).toUpperCase()+c.slice(1)}</div>`).join('')}
         </div>
@@ -483,8 +487,8 @@ async function toggleCheck(id,col){
     CHECKS.forEach(c=>card.classList.remove(ACLS[c]));
     const assigned=CHECKS.find(c=>g[c]);
     if(assigned)card.classList.add(ACLS[assigned]);
-    const utEl=card.querySelector('.card-utsender');
-    if(utEl&&g.utsender)utEl.textContent='Sendt av: '+g.utsender;
+    const utEl=card.querySelector('.card-utsender-bar');
+    if(utEl&&g.utsender){utEl.textContent='📨 Sendt av: '+g.utsender;utEl.className='card-utsender-bar has-utsender';}
   }
   await sb.from(TABLE).update(upd).eq('id',id);
 }
