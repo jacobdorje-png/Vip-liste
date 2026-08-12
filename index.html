@@ -429,7 +429,7 @@ async function topp100(){
   await loadGuests();
 }
 
-
+async function nullstill(){
   if(!confirm('Fjerne alle fordelinger?'))return;
   const upd={};CHECKS.forEach(c=>upd[c]=false);
   await sb.from(TABLE).update(upd).neq('id','00000000-0000-0000-0000-000000000000');
