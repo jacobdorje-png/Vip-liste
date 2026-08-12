@@ -235,6 +235,7 @@ header{background:var(--ink);padding:1.25rem 1.25rem 1rem;display:flex;align-ite
       <div class="fordel-label">Hvem er med?</div>
       <div class="fordel-btns">
         <button class="btn-fordel" onclick="fordel()">Fordel</button>
+        <button class="btn-fordel" style="background:var(--gold);" onclick="topp100()">⭐ Topp 100</button>
         <button class="btn-nullstill" onclick="nullstill()">Nullstill</button>
         <button class="btn-nullstill" style="background:#a07c2e;" onclick="nullstillUtsender()">Nullstill utsender</button>
       </div>
@@ -391,7 +392,44 @@ async function fordel(){
   }
   toast('Fordelt!');await loadGuests();
 }
-async function nullstill(){
+async function topp100(){
+  if(!confirm('Velge ut 100 gjester (flest kjøpt øverst, resten tilfeldig) og fordele 50 på Jacob og 50 på Richard?'))return;
+
+  // Parse beløp fra tidligere_kjopt – fjern punktum/mellomrom og les tall
+  function parseSum(s){
+    if(!s)return -1;
+    const n=parseFloat(String(s).replace(/[\s.]/g,'').replace(',','.'));
+    return isNaN(n)?-1:n;
+  }
+
+  // Del opp i de med tall og de uten
+  const medSum=guests.filter(g=>parseSum(g.tidligere_kjopt)>=0).sort((a,b)=>parseSum(b.tidligere_kjopt)-parseSum(a.tidligere_kjopt));
+  const utenSum=guests.filter(g=>parseSum(g.tidligere_kjopt)<0);
+
+  // Stokk de uten sum tilfeldig
+  for(let i=utenSum.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[utenSum[i],utenSum[j]]=[utenSum[j],utenSum[i]];}
+
+  // Ta topp 100 – først de med sum, fyll opp med tilfeldige
+  const utvalg=[...medSum,...utenSum].slice(0,100);
+
+  if(utvalg.length<100) toast(`Kun ${utvalg.length} gjester i listen – fordeler alle`);
+
+  // Nullstill alle først
+  const reset={};CHECKS.forEach(c=>reset[c]=false);reset.utsender=null;
+  await sb.from(TABLE).update(reset).neq('id','00000000-0000-0000-0000-000000000000');
+
+  // 50 til Jacob, 50 til Richard
+  const jacobIds=utvalg.slice(0,50).map(g=>g.id);
+  const richardIds=utvalg.slice(50,100).map(g=>g.id);
+
+  if(jacobIds.length) await sb.from(TABLE).update({...reset,jacob:true,utsender:'Jacob'}).in('id',jacobIds);
+  if(richardIds.length) await sb.from(TABLE).update({...reset,richard:true,utsender:'Richard'}).in('id',richardIds);
+
+  toast(`${utvalg.length} gjester fordelt – ${jacobIds.length} til Jacob, ${richardIds.length} til Richard`);
+  await loadGuests();
+}
+
+
   if(!confirm('Fjerne alle fordelinger?'))return;
   const upd={};CHECKS.forEach(c=>upd[c]=false);
   await sb.from(TABLE).update(upd).neq('id','00000000-0000-0000-0000-000000000000');
