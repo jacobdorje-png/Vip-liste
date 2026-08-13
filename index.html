@@ -19,8 +19,6 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'DM Sans',sans-serif;background:var(--parchment);color:var(--ink);min-height:100vh;-webkit-tap-highlight-color:transparent;}
-
-/* LOGIN */
 #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--ink);padding:1.5rem;}
 .login-box{background:#1a1916;border:1px solid rgba(184,150,62,0.25);border-radius:20px;padding:2.5rem 2rem;width:100%;max-width:360px;text-align:center;}
 .login-brand{font-family:'Cormorant Garamond',serif;font-size:52px;color:var(--parchment);margin-bottom:4px;}
@@ -30,34 +28,33 @@ body{font-family:'DM Sans',sans-serif;background:var(--parchment);color:var(--in
 #pw-input:focus{border-color:var(--gold);}
 .login-btn{width:100%;padding:16px;background:var(--gold);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
 .login-error{font-size:13px;color:#e74c3c;margin-top:0.75rem;min-height:20px;}
-
 #app{display:none;}
-
-/* HEADER */
-header{background:var(--ink);padding:1.25rem 1.25rem 1rem;display:flex;align-items:center;justify-content:space-between;}
+header{background:var(--ink);padding:1.25rem 1.25rem 0;display:flex;align-items:center;justify-content:space-between;}
 .brand-wrap{display:flex;flex-direction:column;}
 .brand-label{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);}
-.brand-title{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--parchment);line-height:1;}
+.brand-title{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--parchment);line-height:1;}
 .header-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
-.stat-num{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold-light);line-height:1;}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold-light);line-height:1;}
 .stat-lbl{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,240,232,0.4);}
 .live-badge{display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(245,240,232,0.35);}
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse 2s infinite;}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(39,174,96,0.4);}70%{box-shadow:0 0 0 6px rgba(39,174,96,0);}100%{box-shadow:0 0 0 0 rgba(39,174,96,0);}}
 
-/* SEARCH BAR */
+/* TABS */
+.tabs{background:var(--ink);display:flex;padding:0.75rem 1rem 0;gap:4px;}
+.tab{padding:8px 16px;border-radius:8px 8px 0 0;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:none;background:rgba(255,255,255,0.08);color:rgba(245,240,232,0.5);transition:all 0.15s;}
+.tab.active{background:var(--parchment);color:var(--ink);}
+
 .searchbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0.75rem 1rem;display:flex;gap:0.5rem;align-items:center;position:sticky;top:0;z-index:10;}
 .search-wrap{flex:1;position:relative;}
 .search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:0.3;pointer-events:none;}
 .search-wrap input{width:100%;padding:11px 11px 11px 36px;border:1px solid var(--border-strong);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:16px;background:var(--parchment);color:var(--ink);outline:none;-webkit-appearance:none;}
 .search-wrap input:focus{border-color:var(--gold);}
 .btn-sm{padding:10px 13px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
-
-/* FORDEL BAR */
 .fordel-bar{background:#faf8f4;border-bottom:1px solid var(--border);padding:0.75rem 1rem;}
 .fordel-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;}
 .fordel-label{font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);}
-.fordel-btns{display:flex;gap:6px;}
+.fordel-btns{display:flex;gap:6px;flex-wrap:wrap;}
 .btn-fordel{padding:8px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;background:var(--ink);color:var(--parchment);border:none;}
 .btn-nullstill{padding:8px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;background:#888;color:#fff;border:none;}
 .today-pills{display:flex;gap:6px;flex-wrap:wrap;}
@@ -67,15 +64,16 @@ header{background:var(--ink);padding:1.25rem 1.25rem 1rem;display:flex;align-ite
 .today-pill.on-ole{background:var(--co);border-color:rgba(245,158,11,0.5);color:var(--to);}
 .today-pill.on-richard{background:var(--cr);border-color:rgba(139,92,246,0.4);color:var(--tr);}
 .today-pill.on-nina{background:var(--cn);border-color:rgba(236,72,153,0.4);color:var(--tn);}
-
-/* CARDS */
-.cards{padding:0.75rem 1rem 6rem;}
+.cards{padding:0.75rem 1rem 2rem;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:0.7rem;overflow:hidden;}
 .card.aj{border-left:4px solid rgba(59,130,246,0.5);background:var(--cj);}
 .card.as{border-left:4px solid rgba(34,197,94,0.5);background:var(--cs);}
 .card.ao{border-left:4px solid rgba(245,158,11,0.6);background:var(--co);}
 .card.ar{border-left:4px solid rgba(139,92,246,0.5);background:var(--cr);}
 .card.an{border-left:4px solid rgba(236,72,153,0.5);background:var(--cn);}
+.card-utsender-bar{padding:7px 14px;font-size:13px;border-bottom:1px solid var(--border);}
+.card-utsender-bar.has-utsender{background:var(--gold);color:#fff;font-weight:600;}
+.card-utsender-bar.no-utsender{color:#bbb;font-style:italic;background:transparent;}
 .card-top{display:flex;align-items:center;gap:10px;padding:13px 14px 6px;}
 .avatar{width:38px;height:38px;border-radius:50%;background:var(--gold-dim);border:1px solid rgba(184,150,62,0.3);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;color:var(--gold);flex-shrink:0;}
 .card-info{flex:1;min-width:0;}
@@ -84,15 +82,11 @@ header{background:var(--ink);padding:1.25rem 1.25rem 1rem;display:flex;align-ite
 .card-phone a{font-size:19px;font-weight:500;color:var(--gold);text-decoration:none;display:inline-flex;align-items:center;gap:5px;}
 .card-btns{display:flex;gap:4px;flex-shrink:0;}
 .icon-btn{width:36px;height:36px;border-radius:9px;border:none;background:rgba(0,0,0,0.05);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);}
-.card-utsender-bar{padding:7px 14px;font-size:13px;border-bottom:1px solid var(--border);}
-.card-utsender-bar.has-utsender{background:var(--gold);color:#fff;}
-.card-utsender-bar.no-utsender{color:#bbb;font-style:italic;background:transparent;}
-.card-utsender-bar strong{font-weight:700;}
 .card-kjopt{padding:2px 14px 10px;font-size:13px;color:var(--muted);cursor:pointer;line-height:1.4;}
 .card-kjopt.empty-txt{color:#bbb;font-style:italic;}
 .card-kjopt textarea{width:100%;padding:8px 10px;border:1.5px solid var(--gold);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;background:var(--surface);color:var(--ink);outline:none;resize:vertical;min-height:60px;}
 .card-checks{display:flex;gap:6px;flex-wrap:wrap;padding:8px 14px 13px;border-top:1px solid var(--border);}
-.cpill{display:flex;align-items:center;gap:5px;padding:8px 13px;border-radius:20px;border:1px solid var(--border-strong);background:var(--surface);font-size:14px;cursor:pointer;user-select:none;transition:all 0.12s;}
+.cpill{display:flex;align-items:center;gap:5px;padding:8px 13px;border-radius:20px;border:1px solid var(--border-strong);background:var(--surface);font-size:14px;cursor:pointer;user-select:none;}
 .cpill.cj{background:var(--cj);border-color:rgba(59,130,246,0.4);color:var(--tj);}
 .cpill.cs{background:var(--cs);border-color:rgba(34,197,94,0.4);color:var(--ts);}
 .cpill.co{background:var(--co);border-color:rgba(245,158,11,0.5);color:var(--to);}
@@ -100,25 +94,20 @@ header{background:var(--ink);padding:1.25rem 1.25rem 1rem;display:flex;align-ite
 .cpill.cn{background:var(--cn);border-color:rgba(236,72,153,0.4);color:var(--tn);}
 .cpill-dot{width:8px;height:8px;border-radius:50%;border:1.5px solid currentColor;flex-shrink:0;}
 .cpill.cj .cpill-dot,.cpill.cs .cpill-dot,.cpill.co .cpill-dot,.cpill.cr .cpill-dot,.cpill.cn .cpill-dot{background:currentColor;}
-
-/* EMPTY */
 .empty-state{text-align:center;padding:3.5rem 2rem;color:var(--muted);}
 .empty-icon{font-family:'Cormorant Garamond',serif;font-size:48px;color:rgba(184,150,62,0.25);margin-bottom:0.75rem;}
 .empty-state h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--ink);margin-bottom:0.4rem;}
 .empty-state p{font-size:14px;}
-
-.cards{padding:0.75rem 1rem 2rem;}
 .sheet-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:50;align-items:flex-end;justify-content:center;}
 .sheet-bg.open{display:flex;}
 .sheet{background:var(--surface);border-radius:20px 20px 0 0;padding:1.5rem 1.25rem 2.5rem;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;}
 .sheet-handle{width:40px;height:4px;background:var(--border-strong);border-radius:2px;margin:0 auto 1.25rem;}
 .sheet-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;margin-bottom:1.25rem;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
-.form-row.three{grid-template-columns:1fr 1fr 1fr;}
 .field{display:flex;flex-direction:column;gap:5px;}
 .field label{font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);}
 .field input,.field textarea,.field select{padding:13px 12px;border:1px solid var(--border-strong);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:16px;background:var(--parchment);color:var(--ink);outline:none;-webkit-appearance:none;}
-.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--gold);}
+.field input:focus,.field textarea:focus{border-color:var(--gold);}
 .field textarea{resize:vertical;min-height:70px;}
 .sheet-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:1rem;}
 .sheet-btn{padding:14px;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:500;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);text-align:center;}
@@ -130,20 +119,10 @@ header{background:var(--ink);padding:1.25rem 1.25rem 1rem;display:flex;align-ite
 .preview-item strong{min-width:100px;color:var(--ink);}
 .preview-item span{color:var(--muted);}
 .import-note{font-size:12px;color:var(--muted);margin-bottom:0.5rem;}
-
-/* DROP ZONE */
-.drop-zone{margin:0 1rem 0.75rem;border:1.5px dashed var(--gold);border-radius:12px;background:var(--gold-dim);padding:1.25rem;text-align:center;display:none;cursor:pointer;}
-.drop-zone.open{display:block;}
-.drop-zone p{font-size:13px;color:var(--muted);margin-top:4px;}
-.drop-zone strong{color:var(--gold);}
-
-/* TOAST */
-.toast{position:fixed;bottom:6rem;left:50%;transform:translateX(-50%) translateY(8px);background:var(--ink);color:var(--parchment);padding:11px 22px;border-radius:22px;font-size:14px;z-index:999;opacity:0;transition:opacity 0.2s,transform 0.2s;pointer-events:none;white-space:nowrap;}
+.toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(8px);background:var(--ink);color:var(--parchment);padding:11px 22px;border-radius:22px;font-size:14px;z-index:999;opacity:0;transition:opacity 0.2s,transform 0.2s;pointer-events:none;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-/* DESKTOP */
+.loading{text-align:center;padding:3rem;color:var(--muted);font-size:14px;}
 @media(min-width:700px){
-  
   .sheet-bg{align-items:center;}
   .sheet{border-radius:16px;max-width:520px;padding:2rem;}
   .sheet-handle{display:none;}
@@ -172,19 +151,17 @@ header{background:var(--ink);padding:1.25rem 1.25rem 1rem;display:flex;align-ite
   .icon-btn-sm:hover{opacity:1;background:rgba(0,0,0,0.06);}
   .icon-btn-sm.del:hover{color:var(--danger);}
   .cb{width:17px;height:17px;accent-color:var(--gold);cursor:pointer;}
-  header{padding:2rem 2.5rem 1.5rem;}
+  header{padding:2rem 2.5rem 0;}
   .brand-title{font-size:36px;}
   .searchbar{padding:0.875rem 2.5rem;}
   .fordel-bar{padding:0.75rem 2.5rem;display:flex;align-items:center;gap:1.5rem;}
   .fordel-top{margin-bottom:0;flex:none;}
   .fordel-label{white-space:nowrap;}
   .today-pills{flex:1;}
-  .searchbar .btn-add-desk{display:inline-flex!important;}
   .toast{bottom:1.5rem;}
+  .tabs{padding:0.75rem 2.5rem 0;}
 }
-@media(max-width:699px){
-  .table-wrap{display:none;}
-}
+@media(max-width:699px){.table-wrap{display:none;}}
 </style>
 </head>
 <body>
@@ -206,13 +183,15 @@ header{background:var(--ink);padding:1.25rem 1.25rem 1rem;display:flex;align-ite
       <h1 class="brand-title">VIP-liste</h1>
     </div>
     <div class="header-meta">
-      <div>
-        <div class="stat-num" id="total-count">0</div>
-        <div class="stat-lbl">Gjester</div>
-      </div>
+      <div><div class="stat-num" id="total-count">0</div><div class="stat-lbl">Gjester</div></div>
       <div class="live-badge"><div class="live-dot"></div>Live</div>
     </div>
   </header>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-soli" onclick="switchTab('vip_gjester','tab-soli')">Soli-Brug VIP</button>
+    <button class="tab" id="tab-lislerud" onclick="switchTab('lislerud_vip','tab-lislerud')">Lislerud VIP</button>
+  </div>
 
   <div class="searchbar">
     <div class="search-wrap">
@@ -249,7 +228,6 @@ header{background:var(--ink);padding:1.25rem 1.25rem 1rem;display:flex;align-ite
     </div>
   </div>
 
-  <!-- Mobile cards -->
   <div class="cards" id="cards"></div>
   <div class="empty-state" id="empty-state" style="display:none">
     <div class="empty-icon">★</div>
@@ -257,7 +235,6 @@ header{background:var(--ink);padding:1.25rem 1.25rem 1rem;display:flex;align-ite
     <p>Trykk + for å legge til</p>
   </div>
 
-  <!-- Desktop table -->
   <div class="table-wrap" style="display:none">
     <div class="table-scroll">
       <table>
@@ -270,11 +247,8 @@ header{background:var(--ink);padding:1.25rem 1.25rem 1rem;display:flex;align-ite
       </table>
     </div>
   </div>
-
-  
 </div>
 
-<!-- ADD/EDIT SHEET -->
 <div class="sheet-bg" id="form-sheet">
   <div class="sheet">
     <div class="sheet-handle"></div>
@@ -294,7 +268,6 @@ header{background:var(--ink);padding:1.25rem 1.25rem 1rem;display:flex;align-ite
   </div>
 </div>
 
-<!-- IMPORT SHEET -->
 <div class="sheet-bg" id="import-sheet">
   <div class="sheet">
     <div class="sheet-handle"></div>
@@ -308,11 +281,11 @@ header{background:var(--ink);padding:1.25rem 1.25rem 1rem;display:flex;align-ite
     <div class="import-note" id="import-note" style="display:none"></div>
     <div id="import-map" style="display:none">
       <div class="form-row">
-        <div class="field"><label>Fornavn-kolonne</label><select id="col-fornavn" onchange="updatePreview()"></select></div>
-        <div class="field"><label>Etternavn-kolonne</label><select id="col-etternavn" onchange="updatePreview()"></select></div>
+        <div class="field"><label>Fornavn</label><select id="col-fornavn" onchange="updatePreview()"></select></div>
+        <div class="field"><label>Etternavn</label><select id="col-etternavn" onchange="updatePreview()"></select></div>
       </div>
       <div class="form-row">
-        <div class="field"><label>Telefon-kolonne</label><select id="col-phone" onchange="updatePreview()"></select></div>
+        <div class="field"><label>Telefon</label><select id="col-phone" onchange="updatePreview()"></select></div>
         <div class="field"><label>Tidligere kjøpt</label><select id="col-kjopt" onchange="updatePreview()"></select></div>
       </div>
       <div class="import-note">Forhåndsvisning:</div>
@@ -331,13 +304,118 @@ header{background:var(--ink);padding:1.25rem 1.25rem 1rem;display:flex;align-ite
 const SUPABASE_URL='https://epfxrpbzxuwyiqsojlmu.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwZnhycGJ6eHV3eWlxc29qbG11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNTI4NTUsImV4cCI6MjA5MTcyODg1NX0.ZvZBoEn_SEA32FvWQK0E0MPMo5PRwoDgiD0fZUKYP_s';
 const ACCESS_PASSWORD='SoliBrug';
-const TABLE='vip_gjester';
 const CHECKS=['jacob','simen','ole','richard','nina'];
 const CCLS={jacob:'cj',simen:'cs',ole:'co',richard:'cr',nina:'cn'};
 const ACLS={jacob:'aj',simen:'as',ole:'ao',richard:'ar',nina:'an'};
 
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let guests=[],editId=null,importRows=[],importHeaders=[],todayActive={};
+let TABLE='vip_gjester';
+
+// ── LISLERUD SEED DATA ────────────────────────────────────────────
+const LISLERUD_SEED=[
+  {fornavn:'Øyvind',etternavn:'Eriksen',phone:'94810100'},{fornavn:'Kjell Inge',etternavn:'Røkke',phone:'90984412'},
+  {fornavn:'Nicolai',etternavn:'Tangen',phone:''},{fornavn:'Steinar',etternavn:'Gjessing',phone:''},
+  {fornavn:'Christian',etternavn:'Ringnes',phone:'90599121'},{fornavn:'Trym',etternavn:'Lauritzen',phone:'47757997'},
+  {fornavn:'Jarle',etternavn:'Strømodden',phone:'99749229'},{fornavn:'Dronning',etternavn:'Sonja',phone:'22048700'},
+  {fornavn:'Leiv',etternavn:'Askvig',phone:'92060464'},{fornavn:'Jenny',etternavn:'Askvig',phone:'93632639'},
+  {fornavn:'Tor',etternavn:'Bratli',phone:'90752911'},{fornavn:'Ingvild',etternavn:'Bratli',phone:'48201199'},
+  {fornavn:'Tone',etternavn:'Bergesen',phone:'93032001'},{fornavn:'Ann',etternavn:'Naustdal',phone:'90011346'},
+  {fornavn:'Tom',etternavn:'Bergesen',phone:'93067600'},{fornavn:'Christoffer',etternavn:'Westberg',phone:'90544180'},
+  {fornavn:'Alex',etternavn:'Westberg',phone:'92037808'},{fornavn:'Andrea',etternavn:'Cavallari',phone:'92424270'},
+  {fornavn:'Dolores',etternavn:'Kotze',phone:'93267713'},{fornavn:'Ina Johannesen',etternavn:'Diblay',phone:'97567165'},
+  {fornavn:'Dag',etternavn:'Sveinar',phone:'47466331'},{fornavn:'Gro Nesjar',etternavn:'Greve',phone:'90924689'},
+  {fornavn:'Hilde',etternavn:'Mørk',phone:'67145464'},{fornavn:'Jørgen',etternavn:'Skavlan',phone:'92034623'},
+  {fornavn:'Christen',etternavn:'Sveaas',phone:'61310383'},{fornavn:'Kate',etternavn:'Smith',phone:'40438609'},
+  {fornavn:'Kari',etternavn:'Roll-Matthiesen',phone:'41602812'},{fornavn:'Nils',etternavn:'Lund',phone:'90874974'},
+  {fornavn:'Helene Haaland',etternavn:'Mustad',phone:'95144141'},{fornavn:'Wilhelm',etternavn:'Mustad',phone:'90834983'},
+  {fornavn:'Tor Andreas',etternavn:'Gitlelsen',phone:'93286932'},{fornavn:'Einar',etternavn:'Hjeldnes',phone:'93467986'},
+  {fornavn:'Kjersti',etternavn:'Qveim',phone:'90696273'},{fornavn:'Lars',etternavn:'Klakegg',phone:'41601212'},
+  {fornavn:'Venke',etternavn:'Hoff',phone:'90734743'},{fornavn:'Dag',etternavn:'Hol',phone:'99299992'},
+  {fornavn:'Vigdis',etternavn:'Hjort',phone:'40600367'},{fornavn:'Kirsti',etternavn:'Hopstock',phone:'92838649'},
+  {fornavn:'Ellen',etternavn:'Horn',phone:'99541922'},{fornavn:'Kristin',etternavn:'Flood',phone:'90959749'},
+  {fornavn:'Lorella',etternavn:'Scacco',phone:'+393383511187'},{fornavn:'Linnea',etternavn:'Tresckow',phone:'+4540265977'},
+  {fornavn:'Martin',etternavn:'Biehl',phone:'90047677'},{fornavn:'Hellen',etternavn:'Bruhn',phone:'91690363'},
+  {fornavn:'Petter',etternavn:'Grendal',phone:'92044177'},{fornavn:'Hans Petter',etternavn:'Bøen',phone:'91711597'},
+  {fornavn:'Per Christian',etternavn:'Ellefsen',phone:'95919292'},{fornavn:'Lise',etternavn:'Eger',phone:'93031645'},
+  {fornavn:'Arne',etternavn:'Fjørtoft',phone:'90550227'},{fornavn:'Erling',etternavn:'Okkenhaug',phone:'92092522'},
+  {fornavn:'Eva',etternavn:'Hermstad',phone:'91870935'},{fornavn:'Einar',etternavn:'Hjeltnes',phone:'90169237'},
+  {fornavn:'Ingjerd',etternavn:'Hoem',phone:'91850335'},{fornavn:'Ingrid',etternavn:'Thommessen',phone:'95962174'},
+  {fornavn:'Eva',etternavn:'Joly',phone:'90871305'},{fornavn:'Jørgen Rolf',etternavn:'Lohne',phone:'91704991'},
+  {fornavn:'Erling',etternavn:'Kagge',phone:'90839303'},{fornavn:'Eivind',etternavn:'Karlsen',phone:'97124558'},
+  {fornavn:'Jan Einar',etternavn:'Barbo',phone:'92881408'},{fornavn:'Vibeke',etternavn:'Barbo',phone:'92881408'},
+  {fornavn:'Ingvild',etternavn:'Opøien',phone:'95793662'},{fornavn:'Anna Selli',etternavn:'Vik',phone:'97136550'},
+  {fornavn:'Ole Christian',etternavn:'Jensen',phone:'41422122'},{fornavn:'Christian',etternavn:'Lundin',phone:'90592990'},
+  {fornavn:'Per',etternavn:'Eckhoff',phone:'93412545'},{fornavn:'Hans Erik',etternavn:'Johnson',phone:'90892882'},
+  {fornavn:'Hilde',etternavn:'Sjeggestad',phone:'90606242'},{fornavn:'Randi',etternavn:'Bull',phone:'97170905'},
+  {fornavn:'Andreas',etternavn:'Mellbye',phone:'92030373'},{fornavn:'Martine',etternavn:'Mellbye',phone:'94174223'},
+  {fornavn:'Knut',etternavn:'Mellbye',phone:'94174223'},{fornavn:'Hildebritt',etternavn:'Mellbye',phone:'99716617'},
+  {fornavn:'Hilde',etternavn:'Ims',phone:'90893029'},{fornavn:'Nic',etternavn:'Brun-Lie',phone:'90744218'},
+  {fornavn:'Frode',etternavn:'Sulland',phone:'93205224'},{fornavn:'Morten',etternavn:'Yggeseth',phone:'90059801'},
+  {fornavn:'Karl Otto',etternavn:'Løvenskiold',phone:'95940574'},{fornavn:'Lise',etternavn:'Løvenskiold',phone:'95764480'},
+  {fornavn:'Benedicte',etternavn:'Ferner',phone:'91198924'},{fornavn:'Anne',etternavn:'Enger',phone:'90650851'},
+  {fornavn:'Erik',etternavn:'Braathen',phone:'90858545'},{fornavn:'Jørgen',etternavn:'Cappelen',phone:'90181018'},
+  {fornavn:'Carl Johan',etternavn:'Bahre',phone:'92867800'},{fornavn:'Scilla',etternavn:'Treschow',phone:'97664100'},
+  {fornavn:'Aleksandra',etternavn:'Biri',phone:'91393638'},{fornavn:'Elisabeth',etternavn:'Blomquist',phone:'92884362'},
+  {fornavn:'Ole Jacob',etternavn:'Bull',phone:'90751384'},{fornavn:'Rune',etternavn:'Bjåstad',phone:'95785536'},
+  {fornavn:'Arnt',etternavn:'Fredheim',phone:'91521543'},{fornavn:'Bente',etternavn:'Juul',phone:'90955757'},
+  {fornavn:'Kristine',etternavn:'Olsen',phone:'90110969'},{fornavn:'Petter',etternavn:'Olsen',phone:'90039003'},
+  {fornavn:'Lise Stolt',etternavn:'Nilsen',phone:'95498258'},{fornavn:'Gina',etternavn:'Werring',phone:'95789203'},
+  {fornavn:'Valentin',etternavn:'Furst',phone:'+393342224015'},{fornavn:'Torkel',etternavn:'Bevereng',phone:'92039933'},
+  {fornavn:'Berit',etternavn:'Reiss-Andersen',phone:'93090573'},{fornavn:'Elisabeth',etternavn:'Ulven',phone:'92085115'},
+  {fornavn:'Anette',etternavn:'Mellbye',phone:'93433682'},{fornavn:'Thomas',etternavn:'Nortvedt',phone:'93620450'},
+  {fornavn:'Gaute',etternavn:'Brochmann',phone:'92497413'},{fornavn:'Helene',etternavn:'Uri',phone:'95164102'},
+  {fornavn:'Gunnar',etternavn:'Danbolt',phone:'97510678'},{fornavn:'Terje',etternavn:'Ommundsen',phone:'40616572'},
+  {fornavn:'Jan Erik',etternavn:'Kristiansen',phone:'91889387'},{fornavn:'Else',etternavn:'Haavik',phone:'98208853'},
+  {fornavn:'Birgitte',etternavn:'Sandve',phone:'93056543'},{fornavn:'Per Gunnar',etternavn:'Eeg-Tverbakk',phone:'90044512'},
+  {fornavn:'Stein',etternavn:'Slyngstad',phone:'90088990'},{fornavn:'Emma',etternavn:'Lind',phone:'48010531'},
+  {fornavn:'Daniella',etternavn:'Wenneberg',phone:'99734933'},{fornavn:'Merete',etternavn:'Lie',phone:'92222553'},
+  {fornavn:'Per Emil',etternavn:'Grimstad',phone:'95287654'},{fornavn:'Carl',etternavn:'Størmer',phone:'92280846'},
+  {fornavn:'Olav',etternavn:'Langli',phone:'48060480'},{fornavn:'Thor',etternavn:'Thoeneie',phone:'95039911'},
+  {fornavn:'Trude Kolle',etternavn:'Martini',phone:'91551619'},{fornavn:'Mari',etternavn:'Boine',phone:'90744092'},
+  {fornavn:'Geir',etternavn:'Hauge',phone:'99288255'},{fornavn:'Tone',etternavn:'Lindheim',phone:'97079459'},
+  {fornavn:'Åse',etternavn:'Kleveland',phone:'94862886'},{fornavn:'Ina',etternavn:'Blom',phone:''},
+  {fornavn:'Trine Schei',etternavn:'Grande',phone:'90600731'},{fornavn:'Dagfinn',etternavn:'Høybråten',phone:'90871305'},
+  {fornavn:'Ragnild',etternavn:'Wik',phone:'47395230'},{fornavn:'Dorte',etternavn:'Endresen',phone:'90520064'},
+  {fornavn:'Liv',etternavn:'Finborud',phone:'90715173'},{fornavn:'Knut',etternavn:'Wollebæk',phone:'91560482'},
+  {fornavn:'Cecilie Malm',etternavn:'Brundtland',phone:'93441259'},{fornavn:'Georg',etternavn:'Stang',phone:'63909577'},
+  {fornavn:'Hans',etternavn:'Mustad',phone:'91387002'},{fornavn:'Petter',etternavn:'Neslein',phone:'92012285'},
+  {fornavn:'Lars Lutro',etternavn:'Eidnes',phone:'90854367'},{fornavn:'Cecilie B',etternavn:'Knudsen',phone:'93445103'},
+  {fornavn:'Christian',etternavn:'Grønvold',phone:'93245370'},{fornavn:'Rune',etternavn:'Døli',phone:'91788674'},
+  {fornavn:'Thor Arvid',etternavn:'Dyrerud',phone:'95707868'},{fornavn:'Håkon',etternavn:'Harket',phone:'95077451'},
+  {fornavn:'Daniel',etternavn:'Skjeldam',phone:'90742073'},{fornavn:'Inger H',etternavn:'Stemshaug',phone:'92422895'},
+  {fornavn:'Kåre',etternavn:'Tønneson',phone:'90550583'},{fornavn:'Trond',etternavn:'Syvertsen',phone:'91721457'},
+  {fornavn:'Anders',etternavn:'Kalvatn',phone:'70056172'},{fornavn:'Gaute',etternavn:'Øvereng',phone:'47334144'},
+  {fornavn:'Helge',etternavn:'Torvund',phone:'91721964'},{fornavn:'Anne',etternavn:'Wiland',phone:'95070920'},
+  {fornavn:'Ingeborg',etternavn:'Ellevold',phone:'48137629'},{fornavn:'Sofie Henriette',etternavn:'Olsen',phone:'90069003'},
+  {fornavn:'Steinar Aavik',etternavn:'Jakobsen',phone:'92818302'},{fornavn:'Erle',etternavn:'Kyllingmark',phone:'93041149'},
+  {fornavn:'Nils',etternavn:'Thommessen',phone:'91143919'},{fornavn:'Olaf',etternavn:'Thommessen',phone:'97548585'},
+  {fornavn:'Johann Smith',etternavn:'Meyer',phone:'92844144'},{fornavn:'Atle',etternavn:'Brynestad',phone:'99396450'},
+  {fornavn:'Maud Gjeruldsen',etternavn:'Bugge',phone:'41040412'},{fornavn:'Magne',etternavn:'Furuholmen',phone:'66847451'},
+  {fornavn:'Erik',etternavn:'Rudeng',phone:'99536525'},{fornavn:'Tone Lind',etternavn:'Jørgensen',phone:'92883288'},
+  {fornavn:'Mari',etternavn:'Maurstad',phone:'92061544'},{fornavn:'Åge',etternavn:'Kvalbein',phone:'92832572'},
+  {fornavn:'Jens',etternavn:'Riisnæs',phone:'91565936'},{fornavn:'Kjell Erik Killi',etternavn:'Olsen',phone:'91823504'},
+  {fornavn:'Nico',etternavn:'Wideberg',phone:'90038477'},{fornavn:'Siri',etternavn:'Kjølaas',phone:'45271767'},
+  {fornavn:'Bjørn',etternavn:'Nørgaard',phone:'+4560523764'},{fornavn:'Mikkel',etternavn:'McAlinden',phone:''},
+  {fornavn:'Ragnar',etternavn:'Kvam',phone:'90064213'},{fornavn:'Birgitte',etternavn:'Appelong',phone:'92822151'},
+  {fornavn:'Bjørn W',etternavn:'Lindgren',phone:'90020909'},{fornavn:'Glenn',etternavn:'Hagbru',phone:'94521054'},
+  {fornavn:'Dennis',etternavn:'Hagbru',phone:'93472998'},{fornavn:'Ugo',etternavn:'Fermariello',phone:'95027963'},
+  {fornavn:'Abid',etternavn:'Raja',phone:'99440908'},{fornavn:'Alexander',etternavn:'',phone:'45296730'},
+  {fornavn:'Anita',etternavn:'Hanch-Hansen',phone:'90591461'},{fornavn:'Anne Grete',etternavn:'Urnes',phone:'48179437'},
+  {fornavn:'Bror Magnus',etternavn:'Sand',phone:'92439043'},{fornavn:'Beate',etternavn:'Ellingsen',phone:'91621896'},
+  {fornavn:'Gullik',etternavn:'Gulliksen',phone:'91616839'},{fornavn:'Heidi',etternavn:'Borgersen',phone:'91396001'},
+  {fornavn:'Lars',etternavn:'Lantho',phone:'91864939'},{fornavn:'Erik',etternavn:'Collett',phone:'90524484'},
+  {fornavn:'Craig',etternavn:'Dykers',phone:'+16463834762'},{fornavn:'Terje',etternavn:'Grønmo',phone:'92611612'},
+  {fornavn:'Kjell L',etternavn:'Johansen',phone:'99501984'},{fornavn:'Morten',etternavn:'Mellegaard',phone:'90050552'},
+  {fornavn:'Merete',etternavn:'Hoff',phone:'92613037'},{fornavn:'Tale',etternavn:'Øien',phone:'90844096'},
+  {fornavn:'Espen',etternavn:'Eskeland',phone:'90138565'},{fornavn:'Henrik',etternavn:'Hille',phone:'92036058'},
+  {fornavn:'Ervin',etternavn:'Strandskogen',phone:'92466422'},{fornavn:'Eilert Frost',etternavn:'Støren',phone:'95110702'},
+  {fornavn:'Einar',etternavn:'Hagem',phone:'98233576'},{fornavn:'Svein',etternavn:'Lund',phone:'98233575'},
+  {fornavn:'Jørn',etternavn:'Narud',phone:'92207500'},{fornavn:'Torstein',etternavn:'Lømo',phone:'92033390'},
+  {fornavn:'Stein',etternavn:'Sole',phone:'93445561'},{fornavn:'Franco',etternavn:'Bløchlinger',phone:'90030158'},
+  {fornavn:'Stein',etternavn:'Devik',phone:'91320473'},{fornavn:'Ståle',etternavn:'Stensli',phone:'90562963'},
+  {fornavn:'Zenul',etternavn:'Khan',phone:'47023274'},{fornavn:'Mimi',etternavn:'Wiik',phone:'91170436'}
+];
 
 // ── AUTH ──────────────────────────────────────────────────────────
 function tryLogin(){
@@ -360,6 +438,29 @@ if(sessionStorage.getItem('vip-auth')==='1'){
   loadGuests();subscribeRealtime();
 }
 
+// ── TABS ──────────────────────────────────────────────────────────
+async function switchTab(table,tabId){
+  TABLE=table;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  document.getElementById('search').value='';
+  guests=[];render();
+  await loadGuests();
+  if(table==='lislerud_vip')await seedLislerudIfEmpty();
+}
+
+async function seedLislerudIfEmpty(){
+  const{count}=await sb.from('lislerud_vip').select('*',{count:'exact',head:true});
+  if(count>0)return;
+  toast('Legger inn Lislerud VIP-liste…');
+  const rows=LISLERUD_SEED.map(r=>({...r,tidligere_kjopt:'',jacob:false,simen:false,ole:false,richard:false,nina:false}));
+  for(let i=0;i<rows.length;i+=50){
+    await sb.from('lislerud_vip').insert(rows.slice(i,i+50));
+  }
+  await loadGuests();
+  toast(`${LISLERUD_SEED.length} gjester lagt inn!`);
+}
+
 // ── DATA ──────────────────────────────────────────────────────────
 async function loadGuests(){
   const scrollY=window.scrollY;
@@ -367,7 +468,10 @@ async function loadGuests(){
   if(!error){guests=data||[];render();window.scrollTo({top:scrollY});}
 }
 function subscribeRealtime(){
-  sb.channel('vip').on('postgres_changes',{event:'*',schema:'public',table:TABLE},()=>loadGuests()).subscribe();
+  sb.channel('vip_all')
+    .on('postgres_changes',{event:'*',schema:'public',table:'vip_gjester'},()=>{if(TABLE==='vip_gjester')loadGuests();})
+    .on('postgres_changes',{event:'*',schema:'public',table:'lislerud_vip'},()=>{if(TABLE==='lislerud_vip')loadGuests();})
+    .subscribe();
 }
 
 // ── FORDEL ────────────────────────────────────────────────────────
@@ -394,41 +498,20 @@ async function fordel(){
 }
 async function topp100(){
   if(!confirm('Velge ut 100 gjester (flest kjøpt øverst, resten tilfeldig) og fordele 50 på Jacob og 50 på Richard?'))return;
-
-  // Parse beløp fra tidligere_kjopt – fjern punktum/mellomrom og les tall
-  function parseSum(s){
-    if(!s)return -1;
-    const n=parseFloat(String(s).replace(/[\s.]/g,'').replace(',','.'));
-    return isNaN(n)?-1:n;
-  }
-
-  // Del opp i de med tall og de uten
+  function parseSum(s){if(!s)return -1;const n=parseFloat(String(s).replace(/[\s.]/g,'').replace(',','.'));return isNaN(n)?-1:n;}
   const medSum=guests.filter(g=>parseSum(g.tidligere_kjopt)>=0).sort((a,b)=>parseSum(b.tidligere_kjopt)-parseSum(a.tidligere_kjopt));
   const utenSum=guests.filter(g=>parseSum(g.tidligere_kjopt)<0);
-
-  // Stokk de uten sum tilfeldig
   for(let i=utenSum.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[utenSum[i],utenSum[j]]=[utenSum[j],utenSum[i]];}
-
-  // Ta topp 100 – først de med sum, fyll opp med tilfeldige
   const utvalg=[...medSum,...utenSum].slice(0,100);
-
-  if(utvalg.length<100) toast(`Kun ${utvalg.length} gjester i listen – fordeler alle`);
-
-  // Nullstill alle først
+  if(utvalg.length<100)toast(`Kun ${utvalg.length} gjester – fordeler alle`);
   const reset={};CHECKS.forEach(c=>reset[c]=false);reset.utsender=null;
   await sb.from(TABLE).update(reset).neq('id','00000000-0000-0000-0000-000000000000');
-
-  // 50 til Jacob, 50 til Richard
   const jacobIds=utvalg.slice(0,50).map(g=>g.id);
   const richardIds=utvalg.slice(50,100).map(g=>g.id);
-
-  if(jacobIds.length) await sb.from(TABLE).update({...reset,jacob:true,utsender:'Jacob'}).in('id',jacobIds);
-  if(richardIds.length) await sb.from(TABLE).update({...reset,richard:true,utsender:'Richard'}).in('id',richardIds);
-
-  toast(`${utvalg.length} gjester fordelt – ${jacobIds.length} til Jacob, ${richardIds.length} til Richard`);
-  await loadGuests();
+  if(jacobIds.length)await sb.from(TABLE).update({...reset,jacob:true,utsender:'Jacob'}).in('id',jacobIds);
+  if(richardIds.length)await sb.from(TABLE).update({...reset,richard:true,utsender:'Richard'}).in('id',richardIds);
+  toast(`${utvalg.length} gjester fordelt`);await loadGuests();
 }
-
 async function nullstill(){
   if(!confirm('Fjerne alle fordelinger?'))return;
   const upd={};CHECKS.forEach(c=>upd[c]=false);
@@ -436,7 +519,7 @@ async function nullstill(){
   toast('Nullstilt');await loadGuests();
 }
 async function nullstillUtsender(){
-  if(!confirm('Nullstille alle utsendere? Dette fjerner navnene og krysser av-boksene.'))return;
+  if(!confirm('Nullstille alle utsendere?'))return;
   const upd={utsender:null};CHECKS.forEach(c=>upd[c]=false);
   await sb.from(TABLE).update(upd).neq('id','00000000-0000-0000-0000-000000000000');
   toast('Utsendere nullstilt');await loadGuests();
@@ -449,11 +532,8 @@ function render(){
   document.getElementById('total-count').textContent=guests.length;
   const emptyEl=document.getElementById('empty-state');
   const cardsEl=document.getElementById('cards');
-
-  if(!list.length){
-    cardsEl.innerHTML='';
-    emptyEl.style.display='block';
-  } else {
+  if(!list.length){cardsEl.innerHTML='';emptyEl.style.display='block';}
+  else{
     emptyEl.style.display='none';
     cardsEl.innerHTML=list.map(g=>{
       const a=CHECKS.find(c=>g[c]);
@@ -468,12 +548,8 @@ function render(){
             <div class="card-phone">${g.phone?`<a href="sms:${esc(g.phone)}">📱 ${esc(g.phone)}</a>`:''}</div>
           </div>
           <div class="card-btns">
-            <button class="icon-btn" onclick="startEdit('${g.id}')">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </button>
-            <button class="icon-btn" onclick="deleteGuest('${g.id}')">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-            </button>
+            <button class="icon-btn" onclick="startEdit('${g.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn" onclick="deleteGuest('${g.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
           </div>
         </div>
         <div class="card-kjopt ${g.tidligere_kjopt?'':'empty-txt'}" id="kj-${g.id}" onclick="editKjopt('${g.id}')">${esc(g.tidligere_kjopt||'Trykk for å legge inn tidligere kjøp…')}</div>
@@ -483,8 +559,6 @@ function render(){
       </div>`;
     }).join('');
   }
-
-  // Desktop table
   document.getElementById('tbody').innerHTML=list.map(g=>{
     const a=CHECKS.find(c=>g[c]);
     return `<tr class="${a?ACLS[a]:''}">
@@ -501,50 +575,35 @@ function render(){
     </tr>`;
   }).join('');
 }
-
 function ini(f,e){return((f||' ')[0]+(e||' ')[0]).toUpperCase();}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 // ── CHECKS ────────────────────────────────────────────────────────
 async function toggleCheck(id,col){
   const g=guests.find(x=>x.id===id);if(!g)return;
-  const newVal=!g[col];
-  g[col]=newVal;
+  const newVal=!g[col];g[col]=newVal;
   const upd={[col]:newVal};
-  if(newVal){
-    const name=col.charAt(0).toUpperCase()+col.slice(1);
-    g.utsender=name;
-    upd.utsender=name;
-  }
+  if(newVal){const name=col.charAt(0).toUpperCase()+col.slice(1);g.utsender=name;upd.utsender=name;}
   const pill=document.getElementById(`cp-${id}-${col}`);
-  if(pill){
-    if(newVal)pill.classList.add(CCLS[col]);
-    else pill.classList.remove(CCLS[col]);
-  }
+  if(pill){if(newVal)pill.classList.add(CCLS[col]);else pill.classList.remove(CCLS[col]);}
   const card=document.getElementById('card-'+id);
   if(card){
     CHECKS.forEach(c=>card.classList.remove(ACLS[c]));
-    const assigned=CHECKS.find(c=>g[c]);
-    if(assigned)card.classList.add(ACLS[assigned]);
+    const assigned=CHECKS.find(c=>g[c]);if(assigned)card.classList.add(ACLS[assigned]);
     const utEl=card.querySelector('.card-utsender-bar');
     if(utEl&&g.utsender){utEl.textContent='📨 Sendt av: '+g.utsender;utEl.className='card-utsender-bar has-utsender';}
   }
   await sb.from(TABLE).update(upd).eq('id',id);
 }
-async function toggleCheckDirect(id,col,val){
-  await sb.from(TABLE).update({[col]:val}).eq('id',id);
-}
+async function toggleCheckDirect(id,col,val){await sb.from(TABLE).update({[col]:val}).eq('id',id);}
 
 // ── KJOPT EDIT ────────────────────────────────────────────────────
 async function editKjopt(id){
-  const el=document.getElementById('kj-'+id);
-  if(!el||el.querySelector('textarea'))return;
-  const g=guests.find(x=>x.id===id);
-  const orig=g?g.tidligere_kjopt||'':'';
+  const el=document.getElementById('kj-'+id);if(!el||el.querySelector('textarea'))return;
+  const g=guests.find(x=>x.id===id);const orig=g?g.tidligere_kjopt||'':'';
   el.classList.remove('empty-txt');
   el.innerHTML=`<textarea>${esc(orig)}</textarea>`;
-  const ta=el.querySelector('textarea');
-  ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);
+  const ta=el.querySelector('textarea');ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);
   ta.addEventListener('blur',async()=>{
     const val=ta.value.trim();
     el.textContent=val||'Trykk for å legge inn tidligere kjøp…';
@@ -560,8 +619,7 @@ async function startDesktopKjopt(td,id,current){
   td.innerHTML=`<textarea>${orig}</textarea>`;
   const ta=td.querySelector('textarea');ta.focus();
   ta.addEventListener('blur',async()=>{
-    const val=ta.value.trim();
-    td.classList.remove('editing');td.textContent=val||'—';
+    const val=ta.value.trim();td.classList.remove('editing');td.textContent=val||'—';
     await sb.from(TABLE).update({tidligere_kjopt:val}).eq('id',id);
     const g=guests.find(x=>x.id===id);if(g)g.tidligere_kjopt=val;
     td.onclick=()=>startDesktopKjopt(td,id,val);
@@ -570,27 +628,18 @@ async function startDesktopKjopt(td,id,current){
 
 // ── FORM ──────────────────────────────────────────────────────────
 function openAddForm(){
-  editId=null;
-  document.getElementById('form-title').textContent='Ny gjest';
-  document.getElementById('f-fornavn').value='';
-  document.getElementById('f-etternavn').value='';
-  document.getElementById('f-phone').value='';
-  document.getElementById('f-kjopt').value='';
+  editId=null;document.getElementById('form-title').textContent='Ny gjest';
+  document.getElementById('f-fornavn').value='';document.getElementById('f-etternavn').value='';
+  document.getElementById('f-phone').value='';document.getElementById('f-kjopt').value='';
   document.getElementById('form-sheet').classList.add('open');
   setTimeout(()=>document.getElementById('f-fornavn').focus(),200);
 }
-function closeForm(){
-  document.getElementById('form-sheet').classList.remove('open');
-  editId=null;
-}
+function closeForm(){document.getElementById('form-sheet').classList.remove('open');editId=null;}
 function startEdit(id){
   const g=guests.find(x=>x.id===id);if(!g)return;
-  editId=id;
-  document.getElementById('form-title').textContent='Rediger gjest';
-  document.getElementById('f-fornavn').value=g.fornavn||'';
-  document.getElementById('f-etternavn').value=g.etternavn||'';
-  document.getElementById('f-phone').value=g.phone||'';
-  document.getElementById('f-kjopt').value=g.tidligere_kjopt||'';
+  editId=id;document.getElementById('form-title').textContent='Rediger gjest';
+  document.getElementById('f-fornavn').value=g.fornavn||'';document.getElementById('f-etternavn').value=g.etternavn||'';
+  document.getElementById('f-phone').value=g.phone||'';document.getElementById('f-kjopt').value=g.tidligere_kjopt||'';
   document.getElementById('form-sheet').classList.add('open');
   setTimeout(()=>document.getElementById('f-fornavn').focus(),200);
 }
@@ -598,26 +647,21 @@ async function saveGuest(){
   const fornavn=document.getElementById('f-fornavn').value.trim();
   if(!fornavn){document.getElementById('f-fornavn').focus();return;}
   const row={fornavn,etternavn:document.getElementById('f-etternavn').value.trim(),phone:document.getElementById('f-phone').value.trim(),tidligere_kjopt:document.getElementById('f-kjopt').value.trim()};
-
-  // Sjekk duplikat telefonnummer
   if(row.phone){
     const dup=guests.find(g=>g.phone&&g.phone.replace(/\s/g,'')===row.phone.replace(/\s/g,'')&&g.id!==editId);
-    if(dup&&!confirm(`⚠️ Telefonnummeret ${row.phone} tilhører allerede ${dup.fornavn} ${dup.etternavn||''}.\n\nVil du lagre likevel?`))return;
+    if(dup&&!confirm(`⚠️ Nummeret ${row.phone} tilhører allerede ${dup.fornavn} ${dup.etternavn||''}.\n\nVil du lagre likevel?`))return;
   }
   if(editId){
     const{error}=await sb.from(TABLE).update(row).eq('id',editId);
-    if(!error){toast('Gjest oppdatert');closeForm();await loadGuests();}
-    else toast('Feil: '+error.message);
+    if(!error){toast('Gjest oppdatert');closeForm();await loadGuests();}else toast('Feil: '+error.message);
   }else{
     const{error}=await sb.from(TABLE).insert(row);
-    if(!error){toast('Gjest lagt til');closeForm();await loadGuests();}
-    else toast('Feil: '+error.message);
+    if(!error){toast('Gjest lagt til');closeForm();await loadGuests();}else toast('Feil: '+error.message);
   }
 }
 async function deleteGuest(id){
   if(!confirm('Fjerne denne gjesten?'))return;
-  await sb.from(TABLE).delete().eq('id',id);
-  toast('Gjest fjernet');await loadGuests();
+  await sb.from(TABLE).delete().eq('id',id);toast('Gjest fjernet');await loadGuests();
 }
 
 // ── IMPORT ────────────────────────────────────────────────────────
@@ -630,21 +674,16 @@ function handleFile(file){
     const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
     const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''});
     if(!rows.length){toast('Fant ingen data');return;}
-    importHeaders=rows[0].map(String);
-    importRows=rows.slice(1).filter(r=>r.some(c=>String(c).trim()));
-    const note=document.getElementById('import-note');
-    note.textContent=`Fant ${importRows.length} rader i «${file.name}»`;
-    note.style.display='block';
+    importHeaders=rows[0].map(String);importRows=rows.slice(1).filter(r=>r.some(c=>String(c).trim()));
+    const note=document.getElementById('import-note');note.textContent=`Fant ${importRows.length} rader i «${file.name}»`;note.style.display='block';
     populateColSelects(importHeaders);updatePreview();
-    document.getElementById('import-map').style.display='block';
-    document.getElementById('import-btn').style.display='block';
+    document.getElementById('import-map').style.display='block';document.getElementById('import-btn').style.display='block';
   };
   reader.readAsArrayBuffer(file);document.getElementById('file-input').value='';
 }
 function guessCol(h,kws){const lh=h.map(s=>s.toLowerCase());for(const kw of kws){const i=lh.findIndex(s=>s.includes(kw));if(i>=0)return i;}return 0;}
 function populateColSelects(headers){
-  const none='<option value="">— ikke valgt —</option>';
-  const opts=headers.map((h,i)=>`<option value="${i}">${h||(i+1)}</option>`).join('');
+  const none='<option value="">— ikke valgt —</option>';const opts=headers.map((h,i)=>`<option value="${i}">${h||(i+1)}</option>`).join('');
   ['col-fornavn','col-etternavn','col-phone','col-kjopt'].forEach(id=>document.getElementById(id).innerHTML=none+opts);
   document.getElementById('col-fornavn').value=guessCol(headers,['fornavn','first','navn','name']);
   document.getElementById('col-etternavn').value=guessCol(headers,['etternavn','last','surname']);
@@ -652,44 +691,28 @@ function populateColSelects(headers){
   document.getElementById('col-kjopt').value=guessCol(headers,['kjøpt','kjopt','tidligere','previous','purchase']);
 }
 function updatePreview(){
-  const fi=parseInt(document.getElementById('col-fornavn').value);
-  const ei=document.getElementById('col-etternavn').value;
-  const pi=document.getElementById('col-phone').value;
-  document.getElementById('preview-list').innerHTML=importRows.slice(0,5).map(r=>`
-    <div class="preview-item"><strong>${esc(String(r[fi]||'').trim()||'—')}</strong><span>${esc(ei!==''?String(r[parseInt(ei)]||'').trim():'—')}</span><span>${esc(pi!==''?String(r[parseInt(pi)]||'').trim():'—')}</span></div>`).join('');
+  const fi=parseInt(document.getElementById('col-fornavn').value);const ei=document.getElementById('col-etternavn').value;const pi=document.getElementById('col-phone').value;
+  document.getElementById('preview-list').innerHTML=importRows.slice(0,5).map(r=>`<div class="preview-item"><strong>${esc(String(r[fi]||'').trim()||'—')}</strong><span>${esc(ei!==''?String(r[parseInt(ei)]||'').trim():'—')}</span><span>${esc(pi!==''?String(r[parseInt(pi)]||'').trim():'—')}</span></div>`).join('');
 }
 async function doImport(){
-  const fi=parseInt(document.getElementById('col-fornavn').value);
-  const ei=document.getElementById('col-etternavn').value;
-  const pi=document.getElementById('col-phone').value;
-  const ki=document.getElementById('col-kjopt').value;
-  const rows=importRows.map(r=>({
-    fornavn:String(r[fi]||'').trim(),
-    etternavn:ei!==''?String(r[parseInt(ei)]||'').trim():'',
-    phone:pi!==''?String(r[parseInt(pi)]||'').trim():'',
-    tidligere_kjopt:ki!==''?String(r[parseInt(ki)]||'').trim():''
-  })).filter(r=>r.fornavn);
+  const fi=parseInt(document.getElementById('col-fornavn').value);const ei=document.getElementById('col-etternavn').value;const pi=document.getElementById('col-phone').value;const ki=document.getElementById('col-kjopt').value;
+  const rows=importRows.map(r=>({fornavn:String(r[fi]||'').trim(),etternavn:ei!==''?String(r[parseInt(ei)]||'').trim():'',phone:pi!==''?String(r[parseInt(pi)]||'').trim():'',tidligere_kjopt:ki!==''?String(r[parseInt(ki)]||'').trim():''})).filter(r=>r.fornavn);
   const{error}=await sb.from(TABLE).insert(rows);
-  if(!error){toast(`${rows.length} gjester importert`);closeImport();await loadGuests();}
-  else toast('Feil: '+error.message);
+  if(!error){toast(`${rows.length} gjester importert`);closeImport();await loadGuests();}else toast('Feil: '+error.message);
 }
 
 // ── EXPORT ────────────────────────────────────────────────────────
 function exportExcel(){
   if(!guests.length){toast('Ingen gjester å eksportere');return;}
-  const data=[['Fornavn','Etternavn','Telefon','Tidligere kjøpt','Jacob','Simen','Ole','Richard','Nina'],
-    ...guests.map(g=>[g.fornavn,g.etternavn,g.phone,g.tidligere_kjopt,...CHECKS.map(c=>g[c]?'✓':'')])];
-  const ws=XLSX.utils.aoa_to_sheet(data);
-  ws['!cols']=[{wch:16},{wch:16},{wch:16},{wch:30},{wch:8},{wch:8},{wch:8},{wch:10},{wch:8}];
+  const data=[['Fornavn','Etternavn','Telefon','Tidligere kjøpt','Jacob','Simen','Ole','Richard','Nina'],...guests.map(g=>[g.fornavn,g.etternavn,g.phone,g.tidligere_kjopt,...CHECKS.map(c=>g[c]?'✓':'')])];
+  const ws=XLSX.utils.aoa_to_sheet(data);ws['!cols']=[{wch:16},{wch:16},{wch:16},{wch:30},{wch:8},{wch:8},{wch:8},{wch:10},{wch:8}];
   const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'VIP-liste');
-  XLSX.writeFile(wb,'vip-liste.xlsx');toast('Eksportert');
+  XLSX.writeFile(wb,TABLE+'.xlsx');toast('Eksportert');
 }
 
 // ── TOAST ─────────────────────────────────────────────────────────
 let toastTimer;
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);}
-
-// Close sheets on backdrop click
 document.getElementById('form-sheet').addEventListener('click',e=>{if(e.target===document.getElementById('form-sheet'))closeForm();});
 document.getElementById('import-sheet').addEventListener('click',e=>{if(e.target===document.getElementById('import-sheet'))closeImport();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeForm();closeImport();}});
