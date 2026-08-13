@@ -239,7 +239,7 @@ header{background:var(--ink);padding:1.25rem 1.25rem 0;display:flex;align-items:
     <div class="table-scroll">
       <table>
         <thead><tr>
-          <th>Fornavn</th><th>Etternavn</th><th>Telefon</th><th>Tidligere kjøpt</th><th>Sendt av</th>
+          <th>Fornavn</th><th>Etternavn</th><th>Telefon</th><th>Tidligere kjøpt</th><th>Sendes av</th>
           <th class="cc">Jacob</th><th class="cc">Simen</th><th class="cc">Ole</th><th class="cc">Richard</th><th class="cc">Nina</th>
           <th></th>
         </tr></thead>
@@ -546,7 +546,7 @@ function render(){
       const a=CHECKS.find(c=>g[c]);
       return `<div class="card ${a?ACLS[a]:''}" id="card-${g.id}">
         <div class="card-utsender-bar ${g.utsender?'has-utsender':'no-utsender'}">
-          ${g.utsender?`📨 Sendt av: <strong>${esc(g.utsender)}</strong>`:'Ikke tildelt'}
+          ${g.utsender?`📨 Sendes av: <strong>${esc(g.utsender)}</strong>`:'Ikke tildelt'}
         </div>
         <div class="card-top">
           <div class="avatar">${ini(g.fornavn,g.etternavn)}</div>
@@ -573,7 +573,7 @@ function render(){
       <td class="muted">${esc(g.etternavn||'—')}</td>
       <td>${g.phone?`<a class="phone-link" href="sms:${esc(g.phone)}">${esc(g.phone)}</a>`:'<span class="muted">—</span>'}</td>
       <td class="kj" onclick="startDesktopKjopt(this,'${g.id}','${esc(g.tidligere_kjopt||'')}')">${esc(g.tidligere_kjopt||'—')}</td>
-      <td style="font-size:12px;font-weight:600;color:${g.utsender?'var(--gold)':'#ccc'}">${g.utsender?'📨 '+esc(g.utsender):'—'}</td>
+      <td style="font-size:12px;font-weight:600;color:${g.utsender?'var(--gold)':'#ccc'}">${g.utsender?'📨 Sendes av: '+esc(g.utsender):'—'}</td>
       ${CHECKS.map(c=>`<td class="cc"><input type="checkbox" class="cb" ${g[c]?'checked':''} onchange="toggleCheckDirect('${g.id}','${c}',this.checked)"></td>`).join('')}
       <td><div class="row-acts">
         <button class="icon-btn-sm" onclick="startEdit('${g.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
@@ -598,7 +598,7 @@ async function toggleCheck(id,col){
     CHECKS.forEach(c=>card.classList.remove(ACLS[c]));
     const assigned=CHECKS.find(c=>g[c]);if(assigned)card.classList.add(ACLS[assigned]);
     const utEl=card.querySelector('.card-utsender-bar');
-    if(utEl&&g.utsender){utEl.textContent='📨 Sendt av: '+g.utsender;utEl.className='card-utsender-bar has-utsender';}
+    if(utEl&&g.utsender){utEl.textContent='📨 Sendes av: '+g.utsender;utEl.className='card-utsender-bar has-utsender';}
   }
   await sb.from(TABLE).update(upd).eq('id',id);
 }
