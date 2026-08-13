@@ -214,7 +214,7 @@ header{background:var(--ink);padding:1.25rem 1.25rem 0;display:flex;align-items:
       <div class="fordel-label">Hvem er med?</div>
       <div class="fordel-btns">
         <button class="btn-fordel" onclick="fordel()">Fordel</button>
-        <button class="btn-fordel" style="background:var(--gold);" onclick="topp100()">⭐ Topp 100</button>
+        <button class="btn-fordel" style="background:var(--gold);" onclick="topp100()">⭐ Fordel alle</button>
         <button class="btn-nullstill" onclick="nullstill()">Nullstill</button>
         <button class="btn-nullstill" style="background:#a07c2e;" onclick="nullstillUtsender()">Nullstill utsender</button>
       </div>
@@ -497,23 +497,16 @@ async function fordel(){
   toast('Fordelt!');await loadGuests();
 }
 async function topp100(){
-  if(!confirm('Gi Ole 50 gjester, og fordele resten likt på Jacob og Richard?\n\nDe fordeles i alfabetisk rekkefølge og ligger samlet.'))return;
+  if(!confirm(`Fordele alle ${guests.length} gjester?\nOle får 50, resten fordeles likt på Jacob og Richard.`))return;
 
-  function parseSum(s){if(!s)return -1;const n=parseFloat(String(s).replace(/[\s.]/g,'').replace(',','.'));return isNaN(n)?-1:n;}
+  // Sorter alfabetisk etter etternavn
+  const alle=[...guests].sort((a,b)=>(a.etternavn||'').localeCompare(b.etternavn||'','no'));
 
-  // Velg topp 100 – høyest sum først, resten tilfeldig
-  const medSum=guests.filter(g=>parseSum(g.tidligere_kjopt)>=0).sort((a,b)=>parseSum(b.tidligere_kjopt)-parseSum(a.tidligere_kjopt));
-  const utenSum=guests.filter(g=>parseSum(g.tidligere_kjopt)<0);
-  for(let i=utenSum.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[utenSum[i],utenSum[j]]=[utenSum[j],utenSum[i]];}
-  const utvalg=[...medSum,...utenSum].slice(0,100);
-
-  // Sorter utvalget alfabetisk etter etternavn så de ligger samlet
-  utvalg.sort((a,b)=>(a.etternavn||'').localeCompare(b.etternavn||'','no'));
-
-  const oleIds=utvalg.slice(0,50).map(g=>g.id);
-  const mid=50+Math.floor((utvalg.length-50)/2);
-  const jacobIds=utvalg.slice(50,mid).map(g=>g.id);
-  const richardIds=utvalg.slice(mid).map(g=>g.id);
+  const oleIds=alle.slice(0,50).map(g=>g.id);
+  const resten=alle.slice(50);
+  const mid=Math.ceil(resten.length/2);
+  const jacobIds=resten.slice(0,mid).map(g=>g.id);
+  const richardIds=resten.slice(mid).map(g=>g.id);
 
   // Nullstill alle først
   const reset={};CHECKS.forEach(c=>reset[c]=false);reset.utsender=null;
