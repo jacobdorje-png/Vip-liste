@@ -193,6 +193,7 @@ header{background:var(--ink);padding:1.25rem 1.25rem 0;display:flex;align-items:
     <button class="tab" id="tab-lislerud" onclick="switchTab('lislerud_vip','tab-lislerud')">Lislerud VIP</button>
     <button class="tab" id="tab-lislerud2" onclick="switchTab('lislerud_vip_2','tab-lislerud2')">Lislerud VIP 2</button>
     <button class="tab" id="tab-max" onclick="switchTab('max_vip','tab-max')">Max-VIP</button>
+    <button class="tab" id="tab-dup" onclick="switchTab('soli_duplikater','tab-dup')">Soli-Duplikater</button>
   </div>
 
   <div class="searchbar">
@@ -355,6 +356,7 @@ function subscribeRealtime(){
     .on('postgres_changes',{event:'*',schema:'public',table:'lislerud_vip'},()=>{if(TABLE==='lislerud_vip')loadGuests();})
     .on('postgres_changes',{event:'*',schema:'public',table:'lislerud_vip_2'},()=>{if(TABLE==='lislerud_vip_2')loadGuests();})
     .on('postgres_changes',{event:'*',schema:'public',table:'max_vip'},()=>{if(TABLE==='max_vip')loadGuests();})
+    .on('postgres_changes',{event:'*',schema:'public',table:'soli_duplikater'},()=>{if(TABLE==='soli_duplikater')loadGuests();})
     .subscribe();
 }
 
