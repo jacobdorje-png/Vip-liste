@@ -58,6 +58,12 @@ header{background:var(--ink);padding:1.25rem 1.25rem 0;display:flex;align-items:
 .btn-fordel{padding:8px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;background:var(--ink);color:var(--parchment);border:none;}
 .btn-nullstill{padding:8px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;background:#888;color:#fff;border:none;}
 .today-pills{display:flex;gap:6px;flex-wrap:wrap;}
+.range-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:0.6rem;}
+.range-row label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;}
+.range-row input{width:74px;padding:7px 9px;border:1px solid var(--border-strong);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;background:var(--surface);color:var(--ink);outline:none;-webkit-appearance:none;}
+.range-row input:focus{border-color:var(--gold);}
+.range-hint{font-size:11px;color:var(--muted);}
+.btn-alle{padding:6px 11px;border-radius:8px;border:1px solid var(--border-strong);background:var(--surface);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;}
 .today-pill{padding:7px 14px;border-radius:20px;border:1px solid var(--border-strong);background:var(--surface);font-size:13px;cursor:pointer;user-select:none;transition:all 0.15s;}
 .today-pill.on-jacob{background:var(--cj);border-color:rgba(59,130,246,0.4);color:var(--tj);}
 .today-pill.on-simen{background:var(--cs);border-color:rgba(34,197,94,0.4);color:var(--ts);}
@@ -154,10 +160,8 @@ header{background:var(--ink);padding:1.25rem 1.25rem 0;display:flex;align-items:
   header{padding:2rem 2.5rem 0;}
   .brand-title{font-size:36px;}
   .searchbar{padding:0.875rem 2.5rem;}
-  .fordel-bar{padding:0.75rem 2.5rem;display:flex;align-items:center;gap:1.5rem;}
-  .fordel-top{margin-bottom:0;flex:none;}
+  .fordel-bar{padding:0.75rem 2.5rem;}
   .fordel-label{white-space:nowrap;}
-  .today-pills{flex:1;}
   .toast{bottom:1.5rem;}
   .tabs{padding:0.75rem 2.5rem 0;}
 }
@@ -227,6 +231,13 @@ header{background:var(--ink);padding:1.25rem 1.25rem 0;display:flex;align-items:
       <div class="today-pill" id="tp-ole" onclick="toggleToday('ole')">Ole</div>
       <div class="today-pill" id="tp-richard" onclick="toggleToday('richard')">Richard</div>
       <div class="today-pill" id="tp-nina" onclick="toggleToday('nina')">Nina</div>
+    </div>
+    <div class="range-row">
+      <label>Fra nr</label><input type="number" id="r-fra" min="1" value="1" inputmode="numeric">
+      <label>Til nr</label><input type="number" id="r-til" min="1" placeholder="alle" inputmode="numeric">
+      <button class="btn-alle" onclick="settAlle()">Alle</button>
+      <button class="btn-alle" onclick="settResten()">Resten</button>
+      <span class="range-hint" id="range-hint"></span>
     </div>
   </div>
 
@@ -367,20 +378,39 @@ function toggleToday(name){
   if(todayActive[name])el.classList.add('on-'+name);
   else el.classList.remove('on-'+name);
 }
+function settAlle(){document.getElementById('r-fra').value=1;document.getElementById('r-til').value=guests.length;oppdaterHint();}
+function settResten(){
+  let i=guests.findIndex(g=>!g.utsender);
+  if(i<0){toast('Alle er allerede fordelt');return;}
+  document.getElementById('r-fra').value=i+1;
+  document.getElementById('r-til').value=guests.length;
+  oppdaterHint();
+}
+function oppdaterHint(){
+  const el=document.getElementById('range-hint');if(!el)return;
+  const fordelt=guests.filter(g=>g.utsender).length;
+  el.textContent=`${guests.length} i listen · ${fordelt} fordelt`;
+}
 async function fordel(){
   const active=CHECKS.filter(c=>todayActive[c]);
   if(!active.length){toast('Velg hvem som er med i dag først');return;}
-  if(!confirm(`Fordele ${guests.length} gjester likt på: ${active.join(', ')}?`))return;
+  const n=guests.length;
+  let fra=parseInt(document.getElementById('r-fra').value)||1;
+  let til=parseInt(document.getElementById('r-til').value)||n;
+  fra=Math.max(1,Math.min(fra,n)); til=Math.max(fra,Math.min(til,n));
+  const utvalg=guests.slice(fra-1,til);
+  if(!utvalg.length){toast('Tomt utvalg');return;}
+  if(!confirm(`Fordele nr ${fra}–${til} (${utvalg.length} gjester) likt på: ${active.join(', ')}?`))return;
   for(let i=active.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[active[i],active[j]]=[active[j],active[i]];}
-  const n=guests.length,per=Math.ceil(n/active.length);
+  const per=Math.ceil(utvalg.length/active.length);
   for(let i=0;i<active.length;i++){
-    const ids=guests.slice(i*per,Math.min((i+1)*per,n)).map(g=>g.id);
+    const ids=utvalg.slice(i*per,Math.min((i+1)*per,utvalg.length)).map(g=>g.id);
     if(!ids.length)continue;
     const upd={};CHECKS.forEach(c=>upd[c]=false);upd[active[i]]=true;
     upd.utsender=active[i].charAt(0).toUpperCase()+active[i].slice(1);
     await sb.from(TABLE).update(upd).in('id',ids);
   }
-  toast('Fordelt!');await loadGuests();
+  toast(`Fordelt nr ${fra}–${til}`);await loadGuests();
 }
 async function nullstill(){
   if(!confirm('Fjerne alle fordelinger?'))return;
@@ -400,6 +430,7 @@ function render(){
   const q=(document.getElementById('search').value||'').toLowerCase();
   const list=q?guests.filter(g=>(g.fornavn||'').toLowerCase().includes(q)||(g.etternavn||'').toLowerCase().includes(q)||(g.phone||'').toLowerCase().includes(q)||(g.tidligere_kjopt||'').toLowerCase().includes(q)):guests;
   document.getElementById('total-count').textContent=guests.length;
+  oppdaterHint();
   const emptyEl=document.getElementById('empty-state');
   const cardsEl=document.getElementById('cards');
   if(!list.length){cardsEl.innerHTML='';emptyEl.style.display='block';}
